@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -28,8 +30,7 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.main_fragment, new PlayerFragment()).commit();
+        openFragment(new PlayerFragment());
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -39,6 +40,16 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    /**
+     * Open fragment from parameter.
+     *
+     * @param fragment Open fragment
+     */
+    private void openFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction().
+                replace(R.id.main_fragment, fragment).commit();
     }
 
     @Override
@@ -57,11 +68,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
+        if (id == R.id.nav_playback) {
+            openFragment(new PlayerFragment());
+        } else if (id == R.id.nav_playlist) {
+            openFragment(new AllPlaylistsFragment());
+        } /*else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 
