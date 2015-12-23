@@ -7,4 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="header_playback_size">70dp</dimen>
     <dimen name="header_text_size">17sp</dimen>
+    <dimen name="margin_player_btn">4dp</dimen>
+    <dimen name="size_player_btn">60dp</dimen>
 </resources>

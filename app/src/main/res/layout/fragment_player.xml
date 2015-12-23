@@ -1,7 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="itukraine.com.ua.bestmobile.fragment.PlayerFragment">
 
     <ImageView
@@ -11,4 +12,65 @@
         android:adjustViewBounds="true"
         android:src="@drawable/default_song_picture" />
 
-</FrameLayout>
+    <ProgressBar
+        android:id="@+id/song_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progressDrawable="@drawable/song_progressbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/black"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_shufle"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_shufle" />
+
+        <Button
+            android:id="@+id/button_prev_song"
+            android:layout_width="@dimen/size_player_btn"
+            android:layout_height="@dimen/size_player_btn"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_prev_song" />
+
+        <Button
+            android:id="@+id/button_play"
+            android:layout_width="@dimen/size_player_btn"
+            android:layout_height="@dimen/size_player_btn"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_play" />
+
+        <Button
+            android:id="@+id/button_pause"
+            android:layout_width="@dimen/size_player_btn"
+            android:layout_height="@dimen/size_player_btn"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_pause"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_next_song"
+            android:layout_width="@dimen/size_player_btn"
+            android:layout_height="@dimen/size_player_btn"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_next_song" />
+
+        <Button
+            android:id="@+id/button_repeat"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/margin_player_btn"
+            android:background="@drawable/ic_repeat" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
