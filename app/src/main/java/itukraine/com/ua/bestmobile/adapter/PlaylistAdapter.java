@@ -42,11 +42,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         return playlists.get(pos);
     }
 
-    public void add(Playlist playlist) {
-        playlists.add(playlist);
-        notifyDataSetChanged();
-    }
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
