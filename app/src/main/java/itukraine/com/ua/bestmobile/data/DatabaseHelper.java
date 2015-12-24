@@ -75,17 +75,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super.close();
     }
 
-    public boolean addPlaylist(Playlist playlist) {
+    public void addPlaylist(Playlist playlist) {
         try {
-            List<Playlist> playlists = getDao(Playlist.class).queryForEq("name", playlist.name);
-            if (playlists.size() == 0 && playlist.id != 1) {
-                getDao(Playlist.class).createOrUpdate(playlist);
-                return true;
-            }
+            getDao(Playlist.class).createOrUpdate(playlist);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     public List<Playlist> getPlaylists() {
