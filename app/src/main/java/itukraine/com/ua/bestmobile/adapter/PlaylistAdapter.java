@@ -11,10 +11,13 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.dao.Playlist;
+import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private List<Playlist> playlists;
+    private static final String TAG = PlayerFragment.class.getCanonicalName();
+
+    public List<Playlist> playlists;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public PlaylistAdapter(List<Playlist> playlists) {
@@ -66,5 +69,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         public ViewHolder(View v) {
             super(v);
         }
+
     }
 }

@@ -14,12 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
 /**
@@ -60,9 +60,10 @@ public class AllPlaylistsFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Playlist newPlaylist = new Playlist(input.getText().toString());
+                        newPlaylist.songsId.add(1L);
+                        newPlaylist.songsId.add(2L);
                         DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
                         mAdapter.add(newPlaylist);
-                        Toast.makeText(mContext, "Playlist was added", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -89,6 +90,8 @@ public class AllPlaylistsFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
+                new OnItemClickListener()));
 
         return view;
     }
@@ -97,5 +100,14 @@ public class AllPlaylistsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+    }
+
+    private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
+
+        @Override
+        public void onItemClick(View childView, int position) {
+
+        }
+
     }
 }
