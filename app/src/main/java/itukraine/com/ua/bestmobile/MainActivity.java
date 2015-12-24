@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
+    private View mNavHeaderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,15 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        mNavHeaderView = mNavigationView.getHeaderView(0).findViewById(R.id.nav_bar_header);
+        mNavHeaderView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFragment(new PlayerFragment());
+                onBackPressed();
+            }
+        });
     }
 
     /**
@@ -97,6 +108,6 @@ public class MainActivity extends AppCompatActivity
             albumArt = getResources().getDrawable(R.drawable.default_song_picture);
         }
         albumArt.setColorFilter(Color.argb(150, 155, 155, 155), PorterDuff.Mode.SRC_ATOP);
-        mNavigationView.getHeaderView(0).findViewById(R.id.nav_bar_header).setBackground(albumArt);
+        mNavHeaderView.setBackground(albumArt);
     }
 }

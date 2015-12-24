@@ -7,14 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.dao.Playlist;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
-    private String[] mDataset;
+
+    private List<Playlist> playlists;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public PlaylistAdapter(String[] myDataset) {
-        mDataset = myDataset;
+    public PlaylistAdapter(List<Playlist> playlists) {
+        this.playlists = playlists;
     }
 
     // Create new views (invoked by the layout manager)
@@ -31,16 +35,25 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         return vh;
     }
 
+    private Playlist getItem(int pos) {
+        return playlists.get(pos);
+    }
+
+    public void add(Playlist playlist) {
+        playlists.add(playlist);
+        notifyDataSetChanged();
+    }
+
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mPlaylistName.setText(mDataset[position]);
+        holder.mPlaylistName.setText(getItem(position).name);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return playlists.size();
     }
 
     // Provide a reference to the views for each data item
