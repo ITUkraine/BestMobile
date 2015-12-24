@@ -42,7 +42,9 @@ public class AllPlaylistsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
 
+
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
+        addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
         addPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
