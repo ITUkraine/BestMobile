@@ -11,6 +11,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.FileDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
 import itukraine.com.ua.bestmobile.dao.Song;
 
@@ -33,8 +35,10 @@ public class MusicUtil {
      * Scan sdcard for music files.
      *
      * @param context
+     * @return return list of all songs which was found on device
      */
-    public void scanSdcard(Context context) {
+    public List<Song> getAllSongs(Context context) {
+        List<Song> allSongs = new ArrayList<>();
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
                 MediaStore.Audio.Media._ID,
@@ -70,6 +74,8 @@ public class MusicUtil {
                     song.albumId = cursor.getLong(cursor
                             .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
 
+                    allSongs.add(song);
+
                     cursor.moveToNext();
                 }
             }
@@ -81,6 +87,8 @@ public class MusicUtil {
                 cursor.close();
             }
         }
+
+        return allSongs;
     }
 
     /**
@@ -105,7 +113,7 @@ public class MusicUtil {
                 bm = BitmapFactory.decodeFileDescriptor(fd);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Log.e(TAG, e.toString());
         }
         return bm;
     }
