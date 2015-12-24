@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
@@ -24,7 +23,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    private static final Class[] daoList = {Playlist.class, Song.class};
+    private static final Class[] daoList = {Playlist.class};
 
     private static DatabaseHelper instance;
 
