@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.List;
+
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.dao.Playlist;
@@ -36,6 +38,8 @@ public class AllPlaylistsFragment extends Fragment {
     private FloatingActionButton addPlaylistButton;
 
     private Context mContext;
+
+    private List<Playlist> playlists;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,7 +67,8 @@ public class AllPlaylistsFragment extends Fragment {
                         newPlaylist.songsId.add(1L);
                         newPlaylist.songsId.add(2L);
                         DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
-                        mAdapter.add(newPlaylist);
+                        playlists.add(newPlaylist);
+                        mAdapter.notifyDataSetChanged();
                     }
                 });
 
@@ -86,7 +91,9 @@ public class AllPlaylistsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new PlaylistAdapter(DatabaseHelper.getInstance(mContext).getPlaylists());
+        playlists = DatabaseHelper.getInstance(mContext).getPlaylists();
+
+        mAdapter = new PlaylistAdapter(playlists);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
