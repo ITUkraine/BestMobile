@@ -37,6 +37,7 @@ public class MusicUtil {
     public void scanSdcard(Context context) {
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
+                MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
@@ -54,6 +55,8 @@ public class MusicUtil {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     Song song = new Song();
+                    song.id = cursor.getLong(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
                     song.title = cursor.getString(cursor
                             .getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
                     song.artist = cursor.getString(cursor
