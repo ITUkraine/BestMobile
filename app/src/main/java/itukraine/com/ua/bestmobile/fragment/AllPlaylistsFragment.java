@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
@@ -42,12 +44,19 @@ public class AllPlaylistsFragment extends Fragment {
 
     private List<Playlist> playlists;
 
+    private Comparator<Playlist> alphabeticalPlaylistComparator = new Comparator<Playlist>() {
+        public int compare(Playlist p1, Playlist p2) {
+            return p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
 
+        DatabaseHelper.getInstance(mContext).addPlaylist(new Playlist("All songs"));
 
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
         addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
@@ -65,10 +74,9 @@ public class AllPlaylistsFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Playlist newPlaylist = new Playlist(input.getText().toString());
-                        newPlaylist.songsId.add(1L);
-                        newPlaylist.songsId.add(2L);
                         DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
                         playlists.add(newPlaylist);
+                        Collections.sort(playlists, alphabeticalPlaylistComparator);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
@@ -93,6 +101,8 @@ public class AllPlaylistsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         playlists = DatabaseHelper.getInstance(mContext).getPlaylists();
+
+        Collections.sort(playlists, alphabeticalPlaylistComparator);
 
         mAdapter = new PlaylistAdapter(playlists);
         mRecyclerView.setAdapter(mAdapter);
