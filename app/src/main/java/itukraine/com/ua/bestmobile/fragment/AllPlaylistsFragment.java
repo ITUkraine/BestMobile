@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -113,7 +114,10 @@ public class AllPlaylistsFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-
+            ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, new SongListFragment())
+                    .addToBackStack(null)
+                    .commit();
         }
 
     }
