@@ -20,6 +20,7 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,6 +87,8 @@ public class AllPlaylistsFragment extends Fragment {
 
         mAdapter = new PlaylistAdapter(DatabaseHelper.getInstance(mContext).getPlaylists());
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
 
         return view;
     }
