@@ -1,10 +1,16 @@
 package itukraine.com.ua.bestmobile.util;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import java.io.FileDescriptor;
 
 import itukraine.com.ua.bestmobile.dao.Song;
 
@@ -23,6 +29,11 @@ public class MusicUtil {
         return instance;
     }
 
+    /**
+     * Scan sdcard for music files.
+     *
+     * @param context
+     */
     public void scanSdcard(Context context) {
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
@@ -30,7 +41,8 @@ public class MusicUtil {
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DURATION
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.ALBUM_ID
         };
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
 
@@ -42,13 +54,18 @@ public class MusicUtil {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     Song song = new Song();
-                    song.title = cursor.getString(0);
-                    song.artist = cursor.getString(1);
-                    song.album = cursor.getString(2);
-                    song.path = cursor.getString(3);
-                    song.duration = cursor.getString(4);
-
-                    Log.i(TAG, song.toString());
+                    song.title = cursor.getString(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+                    song.artist = cursor.getString(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+                    song.album = cursor.getString(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+                    song.path = cursor.getString(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                    song.duration = cursor.getInt(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                    song.albumId = cursor.getLong(cursor
+                            .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
 
                     cursor.moveToNext();
                 }
@@ -61,6 +78,33 @@ public class MusicUtil {
                 cursor.close();
             }
         }
+    }
+
+    /**
+     * Get album art by MediaStore.Audio.Media.ALBUM_ID.
+     *
+     * @param context
+     * @param album_id ALBUM_ID of art
+     * @return Bitmap related to ALBUM_ID
+     */
+    public Bitmap getAlbumart(Context context, Long album_id) {
+        Bitmap bm = null;
+        try {
+            final Uri ALBUM_ART_URI = Uri.parse("content://media/external/audio/albumart");
+
+            Uri uri = ContentUris.withAppendedId(ALBUM_ART_URI, album_id);
+
+            ParcelFileDescriptor pfd = context.getContentResolver()
+                    .openFileDescriptor(uri, "r");
+
+            if (pfd != null) {
+                FileDescriptor fd = pfd.getFileDescriptor();
+                bm = BitmapFactory.decodeFileDescriptor(fd);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return bm;
     }
 
 }
