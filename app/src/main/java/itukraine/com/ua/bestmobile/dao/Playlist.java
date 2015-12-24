@@ -30,6 +30,7 @@ public class Playlist {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", totalTime='" + totalTime + '\'' +
+                ", songsId=" + songsId +
                 '}';
     }
 }
