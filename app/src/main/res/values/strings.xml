@@ -19,4 +19,5 @@
     <string name="title">Title</string>
     <string name="duration">Duration</string>
     <string name="all_songs_playlist_name">All songs</string>
+    <string name="msg_playlist_exist">Playlist with this name already exist</string>
 </resources>

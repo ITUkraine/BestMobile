@@ -6,4 +6,5 @@
     <color name="primary_text_material_light">#ffffff</color>
     <color name="statusBarColor">#000000</color>
     <color name="windowBackground">#ffffff</color>
+    <color name="selectedSong">#4c4c4c</color>
 </resources>

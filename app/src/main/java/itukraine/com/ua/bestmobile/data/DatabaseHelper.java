@@ -91,4 +91,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
         return new ArrayList<>();
     }
+
+    /**
+     * Method to find playlist by name
+     *
+     * @param name name of the playlist
+     * @return instance of the playlist or null if playlist with this name doesn't exist
+     */
+    public Playlist findPlaylistByName(String name) {
+        List<Playlist> playlists = new ArrayList<>();
+        try {
+            playlists = getDao(Playlist.class).query(getDao(Playlist.class).queryBuilder().where().like("name", name).prepare());
+            if (playlists.size() == 0) {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playlists.get(0);
+    }
 }

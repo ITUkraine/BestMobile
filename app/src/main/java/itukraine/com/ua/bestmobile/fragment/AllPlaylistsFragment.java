@@ -10,11 +10,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,32 +66,49 @@ public class AllPlaylistsFragment extends Fragment {
         addPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        getActivity());
                 builder.setTitle("Playlist title");
-
-                final EditText input = new EditText(mContext);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                final EditText input = new EditText(getActivity());
+                builder.setPositiveButton("OK", null);
+                builder.setNegativeButton("cancel", null);
                 builder.setView(input);
 
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                final AlertDialog mAlertDialog = builder.create();
+                mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Playlist newPlaylist = new Playlist(input.getText().toString());
-                        DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
-                        playlists.add(newPlaylist);
-                        Collections.sort(playlists, alphabeticalPlaylistComparator);
-                        mAdapter.notifyDataSetChanged();
+                    public void onShow(DialogInterface dialog) {
+
+                        Button positiveButton = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        positiveButton.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                String newPlaylistName = input.getText().toString();
+
+                                if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
+                                        || DatabaseHelper.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
+                                    Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                mAlertDialog.cancel();
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName)).addToBackStack(null).commit();
+                            }
+                        });
+
+                        Button negativeButton = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                        negativeButton.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                mAlertDialog.cancel();
+                            }
+                        });
                     }
                 });
+                mAlertDialog.show();
 
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
             }
         });
 
