@@ -13,6 +13,7 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.SongAdapter;
+import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.dao.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -20,7 +21,7 @@ import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
 public class SongListFragment extends Fragment {
 
-    private static final String TAG = AllPlaylistsFragment.class.getCanonicalName();
+    private static final String TAG = SongListFragment.class.getCanonicalName();
 
     private RecyclerView mRecyclerView;
     private SongAdapter mAdapter;
@@ -28,7 +29,15 @@ public class SongListFragment extends Fragment {
 
     private Context mContext;
 
-    private List<Song> songList;
+    private List<Song> songList; // TODO don't really know if it's needed
+    private Playlist currentPlaylist;
+
+    public SongListFragment() {
+    }
+
+    public SongListFragment(Playlist currentPlaylist) {
+        this.currentPlaylist = currentPlaylist;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +53,12 @@ public class SongListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        songList = MusicUtil.getInstance().getAllSongs(mContext); // TODO load songs from playlist
+        // load all songs from device if it's default playlist
+        if (currentPlaylist.name.equals(getResources().getString(R.string.all_songs_playlist_name))) {
+            songList = MusicUtil.getInstance().getAllSongs(mContext);
+        } else {
+            songList = MusicUtil.getInstance().getSongsByID(mContext, currentPlaylist.songsId);
+        }
 
         mAdapter = new SongAdapter(mContext, songList);
         mRecyclerView.setAdapter(mAdapter);

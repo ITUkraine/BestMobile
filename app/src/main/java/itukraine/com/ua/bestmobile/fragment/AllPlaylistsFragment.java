@@ -128,7 +128,7 @@ public class AllPlaylistsFragment extends Fragment {
         @Override
         public void onItemClick(View childView, int position) {
             ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment, new SongListFragment())
+                    .replace(R.id.main_fragment, new SongListFragment(playlists.get(position)))
                     .addToBackStack(null)
                     .commit();
         }

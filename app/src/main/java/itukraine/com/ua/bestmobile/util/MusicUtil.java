@@ -118,4 +118,80 @@ public class MusicUtil {
         return bm;
     }
 
+    /**
+     * Get song by it's id.
+     *
+     * @param context
+     * @param id      ID of the song from MediaStore
+     * @return Instance of song
+     */
+    public Song getSongByID(Context context, Long id) {
+        Cursor cursor = null;
+        Song song = null;
+        try {
+            Uri mediaContentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            String[] projection = {
+                    MediaStore.Audio.Media._ID,
+                    MediaStore.Audio.Media.TITLE,
+                    MediaStore.Audio.Media.ARTIST,
+                    MediaStore.Audio.Media.ALBUM,
+                    MediaStore.Audio.Media.DATA,
+                    MediaStore.Audio.Media.DURATION,
+                    MediaStore.Audio.Media.ALBUM_ID
+            };
+            String selection = MediaStore.Audio.Media._ID + "=?";
+            String[] selectionArgs = new String[]{"" + id}; //This is the id you are looking for
+
+            cursor = context.getContentResolver()
+                    .query(mediaContentUri, projection, selection, selectionArgs, null);
+
+            if (cursor != null && cursor.getCount() >= 0) {
+                cursor.moveToPosition(0);
+
+                song = new Song();
+                song.id = cursor.getLong(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+                song.title = cursor.getString(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+                song.artist = cursor.getString(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+                song.album = cursor.getString(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+                song.path = cursor.getString(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                song.duration = cursor.getInt(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                song.albumId = cursor.getLong(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return song;
+    }
+
+    /**
+     * Get list of songs.
+     *
+     * @param context
+     * @param songsID List of songs IDs from MediaStore
+     * @return List of songs.
+     */
+    public List<Song> getSongsByID(Context context, List<Long> songsID) {
+        List<Song> songs = new ArrayList<>();
+        Song song = null;
+        for (Long id : songsID) {
+            song = getSongByID(context, id);
+            if (song != null) {
+                songs.add(song);
+            }
+        }
+        return songs;
+    }
+
 }
