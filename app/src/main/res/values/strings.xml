@@ -18,4 +18,5 @@
     <string name="album">Album</string>
     <string name="title">Title</string>
     <string name="duration">Duration</string>
+    <string name="all_songs_playlist_name">All songs</string>
 </resources>

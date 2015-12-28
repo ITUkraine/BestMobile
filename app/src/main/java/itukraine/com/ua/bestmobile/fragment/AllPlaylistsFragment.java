@@ -46,6 +46,10 @@ public class AllPlaylistsFragment extends Fragment {
 
     private Comparator<Playlist> alphabeticalPlaylistComparator = new Comparator<Playlist>() {
         public int compare(Playlist p1, Playlist p2) {
+            if (p1.name.equals(getResources().getString(R.string.all_songs_playlist_name)))
+                return -1;
+            if (p2.name.equals(getResources().getString(R.string.all_songs_playlist_name)))
+                return 1;
             return p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
         }
     };
@@ -55,8 +59,6 @@ public class AllPlaylistsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
-
-        DatabaseHelper.getInstance(mContext).addPlaylist(new Playlist("All songs"));
 
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
         addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
@@ -101,6 +103,7 @@ public class AllPlaylistsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         playlists = DatabaseHelper.getInstance(mContext).getPlaylists();
+        playlists.add(new Playlist(getResources().getString(R.string.all_songs_playlist_name)));
 
         Collections.sort(playlists, alphabeticalPlaylistComparator);
 
