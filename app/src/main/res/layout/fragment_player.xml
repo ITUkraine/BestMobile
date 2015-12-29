@@ -5,19 +5,63 @@
     android:orientation="vertical"
     tools:context="itukraine.com.ua.bestmobile.fragment.PlayerFragment">
 
-    <ImageView
-        android:id="@+id/song_picture"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/default_song_picture" />
+        android:layout_height="wrap_content">
 
-    <ProgressBar
+        <ImageView
+            android:id="@+id/song_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/album"
+            android:scaleType="centerInside"
+            android:src="@drawable/default_song_picture"
+            android:tint="#705e5e5e" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/song_picture"
+            android:layout_alignLeft="@id/song_picture"
+            android:layout_alignRight="@id/song_picture"
+            android:layout_alignTop="@id/song_picture"
+            android:layout_margin="1dp"
+            android:gravity="center|bottom|start"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/song_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_song_info_margin"
+                android:ellipsize="end"
+                android:gravity="center|bottom|start"
+                android:singleLine="true"
+                android:text="@string/artist"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/main_artist_size" />
+
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/main_song_info_margin"
+                android:ellipsize="end"
+                android:gravity="center|bottom|start"
+                android:singleLine="true"
+                android:text="@string/song"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/main_song_size" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <SeekBar
         android:id="@+id/song_progressbar"
-        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="100"
         android:progressDrawable="@drawable/song_progressbar" />
 
     <LinearLayout
@@ -47,14 +91,6 @@
             android:layout_height="@dimen/size_player_btn"
             android:layout_margin="@dimen/margin_player_btn"
             android:background="@drawable/ic_play" />
-
-        <Button
-            android:id="@+id/button_pause"
-            android:layout_width="@dimen/size_player_btn"
-            android:layout_height="@dimen/size_player_btn"
-            android:layout_margin="@dimen/margin_player_btn"
-            android:background="@drawable/ic_pause"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_next_song"

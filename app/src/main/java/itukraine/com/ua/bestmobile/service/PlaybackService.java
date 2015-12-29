@@ -124,7 +124,6 @@ public class PlaybackService extends Service implements
     public void playSong() {
         showNotification();
         mMediaPlayer.reset();
-
         //get song
         Song playSong = mSongs.get(songPos);
         //get id
@@ -144,6 +143,10 @@ public class PlaybackService extends Service implements
         Log.i(TAG, String.format("Play %d from %d : %s", songPos, mSongs.size() - 1, playSong));
 
         mMediaPlayer.prepareAsync();
+    }
+
+    public void continueSong() {
+        mMediaPlayer.start();
     }
 
     public void nextSong() {
@@ -170,8 +173,16 @@ public class PlaybackService extends Service implements
         playSong();
     }
 
+    public boolean isPlaying() {
+        return mMediaPlayer.isPlaying();
+    }
+
     public Song getCurrentSong() {
         return mSongs.get(songPos);
+    }
+
+    public int getCurrentTime() {
+        return mMediaPlayer.getCurrentPosition();
     }
 
     @Override

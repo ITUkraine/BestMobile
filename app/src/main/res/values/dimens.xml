@@ -9,4 +9,7 @@
     <dimen name="header_text_size">17sp</dimen>
     <dimen name="margin_player_btn">4dp</dimen>
     <dimen name="size_player_btn">60dp</dimen>
+    <dimen name="main_song_size">20sp</dimen>
+    <dimen name="main_artist_size">25sp</dimen>
+    <dimen name="main_song_info_margin">1dp</dimen>
 </resources>
