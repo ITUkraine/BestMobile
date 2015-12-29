@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -109,5 +112,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
         return playlists.get(0);
+    }
+
+    public void deletePlaylistByName(String name) {
+        Dao dao;
+        try {
+            dao = getDao(Playlist.class);
+            DeleteBuilder<Playlist, Integer> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("name", name);
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void renamePlaylist(String oldPlaylistName, String newPlaylistName) {
+        Dao dao;
+        try {
+            dao = getDao(Playlist.class);
+            UpdateBuilder<Playlist, Integer> updateBuilder = dao.updateBuilder();
+            updateBuilder.where().eq("name", oldPlaylistName);
+            updateBuilder.updateColumnValue("name", newPlaylistName);
+            updateBuilder.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

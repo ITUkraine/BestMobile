@@ -66,49 +66,7 @@ public class AllPlaylistsFragment extends Fragment {
         addPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        getActivity());
-                builder.setTitle("Playlist title");
-                final EditText input = new EditText(getActivity());
-                builder.setPositiveButton("OK", null);
-                builder.setNegativeButton("cancel", null);
-                builder.setView(input);
-
-                final AlertDialog mAlertDialog = builder.create();
-                mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-
-                        Button positiveButton = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positiveButton.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View view) {
-                                String newPlaylistName = input.getText().toString();
-
-                                if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
-                                        || DatabaseHelper.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
-                                    Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                                mAlertDialog.cancel();
-                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName)).addToBackStack(null).commit();
-                            }
-                        });
-
-                        Button negativeButton = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                        negativeButton.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View view) {
-                                mAlertDialog.cancel();
-                            }
-                        });
-                    }
-                });
-                mAlertDialog.show();
-
+                displayPlaylistTitleDialog(null, true);
             }
         });
 
@@ -141,6 +99,77 @@ public class AllPlaylistsFragment extends Fragment {
         mContext = context;
     }
 
+    private void displayConfirmDeleteDialog(final int position) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(
+                mContext.getString(R.string.msg_confirm_delete_playlist))
+                .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
+            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
+                                @SuppressWarnings("unused") final int id) {
+                DatabaseHelper.getInstance(mContext).deletePlaylistByName(playlists.get(position).name);
+                playlists.remove(position);
+                mAdapter.notifyDataSetChanged();
+            }
+        }).setNegativeButton(mContext.getString(R.string.btn_no), new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void displayPlaylistTitleDialog(final Integer position, final boolean isNewPlaylist) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity());
+        builder.setTitle(isNewPlaylist ? mContext.getString(R.string.dlg_create_playlist) : mContext.getString(R.string.dlg_rename_playlist));
+        final EditText input = new EditText(getActivity());
+        builder.setPositiveButton(isNewPlaylist ? mContext.getString(R.string.btn_create_playlist) : mContext.getString(R.string.btn_rename_playlist), null);
+        builder.setNegativeButton(mContext.getString(R.string.btn_cancel), null);
+        builder.setView(input);
+
+        final AlertDialog mAlertDialog = builder.create();
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button positiveButton = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String newPlaylistName = input.getText().toString();
+                        if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
+                                || DatabaseHelper.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
+                            Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if (!isNewPlaylist) {
+                            String oldPlaylistName = playlists.get(position).name;
+                            DatabaseHelper.getInstance(mContext).renamePlaylist(oldPlaylistName, newPlaylistName);
+                            playlists.get(position).name = newPlaylistName;
+                            mAdapter.notifyItemChanged(position);
+                            mAlertDialog.cancel();
+                            return;
+                        }
+                        mAlertDialog.cancel();
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName)).addToBackStack(null).commit();
+                    }
+                });
+
+                Button negativeButton = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negativeButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        mAlertDialog.cancel();
+                    }
+                });
+            }
+        });
+        mAlertDialog.show();
+    }
+
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
@@ -151,5 +180,32 @@ public class AllPlaylistsFragment extends Fragment {
                     .commit();
         }
 
+        @Override
+        public void onItemLongPress(View childView, final int position) {
+
+            boolean isDefaultPlaylist = playlists.get(position).name.equals(getResources().getString(R.string.all_songs_playlist_name));
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setItems(isDefaultPlaylist ? R.array.play : R.array.playlist_action_array, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case 0:
+                            //Play playlist
+                            break;
+                        case 1:
+                            //Rename playlist
+                            displayPlaylistTitleDialog(position, false);
+                            break;
+                        case 2:
+                            //Delete playlist
+                            displayConfirmDeleteDialog(position);
+                            break;
+                    }
+                }
+            });
+            builder.show();
+        }
+
     }
+
 }
