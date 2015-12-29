@@ -1,9 +1,14 @@
 package itukraine.com.ua.bestmobile;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +22,8 @@ import android.view.View;
 
 import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
+import itukraine.com.ua.bestmobile.service.PlaybackService;
+import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -25,6 +32,34 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
     private View mNavHeaderView;
+
+    private PlaybackService mPlaybackService;
+    private Intent mPlayIntent;
+    private boolean mMusicBound = false;
+
+    //connection to the service
+    private ServiceConnection playbackConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
+            //get service
+            mPlaybackService = binder.getService();
+            mMusicBound = true;
+
+            // set all songs as default playlist
+            mPlaybackService.setSongs(MusicUtil.getInstance().getAllSongs(MainActivity.this));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mMusicBound = false;
+        }
+    };
+
+    public PlaybackService getPlaybackService() {
+        return mPlaybackService;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +87,16 @@ public class MainActivity extends AppCompatActivity
                 onBackPressed();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mPlayIntent == null) {
+            mPlayIntent = new Intent(this, PlaybackService.class);
+            bindService(mPlayIntent, playbackConnection, Context.BIND_AUTO_CREATE);
+            startService(mPlayIntent);
+        }
     }
 
     /**
@@ -120,5 +165,12 @@ public class MainActivity extends AppCompatActivity
         }
         albumArt.setColorFilter(Color.argb(150, 155, 155, 155), PorterDuff.Mode.SRC_ATOP);
         mNavHeaderView.setBackground(albumArt);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(mPlayIntent);
+        mPlaybackService = null;
+        super.onDestroy();
     }
 }
