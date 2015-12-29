@@ -9,10 +9,12 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.List;
@@ -26,15 +28,19 @@ public class PlaybackService extends Service implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
+    public static final String PLAYBACK_PROGRESS_UPDATE = PlaybackService.class.getCanonicalName() + "PROGRESS_UPDATE";
+    public static final String PLAYBACK_INFO_UPDATE = PlaybackService.class.getCanonicalName() + "INFO_UPDATE";
+    public static final String EXTRA_PROGRESS = "EXTRA_PROGRESS";
+    public static final String EXTRA_INFO_CHANGED = "EXTRA_INFO_CHANGED";
     private final static String TAG = PlaybackService.class.getSimpleName();
     private final IBinder mPlaybackBinder = new PlaybackBinder();
     private final int NOTIFICATION_ID = 281215;
-
     MediaPlayer mMediaPlayer = null;
     private int songPos;
     private List<Song> mSongs;
 
     private NotificationManager mNM;
+    private LocalBroadcastManager broadcaster;
 
     @Nullable
     @Override
@@ -59,6 +65,8 @@ public class PlaybackService extends Service implements
         Log.i(TAG, "Service created");
 
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        broadcaster = LocalBroadcastManager.getInstance(this);
     }
 
     private void showNotification() {
@@ -97,12 +105,30 @@ public class PlaybackService extends Service implements
         //start playback
         mp.start();
 
+        sendInfoUpdate();
+
+        runAsyncProgressUpdate();
+
         Log.i(TAG, "Service prepared");
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        Log.i(TAG, "Song completed");
 
+        nextSong();
+    }
+
+    private void sendProgressUpdate() {
+        Intent updateIntent = new Intent(PLAYBACK_PROGRESS_UPDATE);
+        updateIntent.putExtra(EXTRA_PROGRESS, mMediaPlayer.getCurrentPosition());
+        broadcaster.sendBroadcast(updateIntent);
+    }
+
+    private void sendInfoUpdate() {
+        Intent updateIntent = new Intent(PLAYBACK_INFO_UPDATE);
+        updateIntent.putExtra(EXTRA_INFO_CHANGED, true);
+        broadcaster.sendBroadcast(updateIntent);
     }
 
     @Override
@@ -147,6 +173,8 @@ public class PlaybackService extends Service implements
 
     public void continueSong() {
         mMediaPlayer.start();
+
+        runAsyncProgressUpdate();
     }
 
     public void nextSong() {
@@ -201,6 +229,23 @@ public class PlaybackService extends Service implements
         stopForeground(true);
         if (mMediaPlayer != null) mMediaPlayer.release();
         Log.i(TAG, "Service destroyed");
+    }
+
+    private void runAsyncProgressUpdate() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (isPlaying()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    sendProgressUpdate();
+                }
+                return null;
+            }
+        }.execute();
     }
 
     public class PlaybackBinder extends Binder {

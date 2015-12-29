@@ -1,8 +1,10 @@
 package itukraine.com.ua.bestmobile;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,6 +14,7 @@ import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,6 +39,9 @@ public class MainActivity extends AppCompatActivity
     private PlaybackService mPlaybackService;
     private Intent mPlayIntent;
     private boolean mMusicBound = false;
+
+    private BroadcastReceiver receiverProgressUpdate;
+    private BroadcastReceiver receiverInfoUpdate;
 
     //connection to the service
     private ServiceConnection playbackConnection = new ServiceConnection() {
@@ -91,6 +97,38 @@ public class MainActivity extends AppCompatActivity
                 onBackPressed();
             }
         });
+
+        receiverProgressUpdate = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int pos = intent.getIntExtra(PlaybackService.EXTRA_PROGRESS, 0);
+                sendDataToFragment(pos);
+            }
+        };
+
+        receiverInfoUpdate = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean infoUpdate = intent.getBooleanExtra(PlaybackService.EXTRA_INFO_CHANGED, false);
+                if (infoUpdate) {
+                    sendUpdateToFragment();
+                }
+            }
+        };
+    }
+
+    private void sendDataToFragment(int pos) {
+        Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        if (currentFragment instanceof PlayerFragment) {
+            ((PlayerFragment) currentFragment).updateSongProgress(pos);
+        }
+    }
+
+    private void sendUpdateToFragment() {
+        Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        if (currentFragment instanceof PlayerFragment) {
+            ((PlayerFragment) currentFragment).displaySongData();
+        }
     }
 
     @Override
@@ -101,6 +139,18 @@ public class MainActivity extends AppCompatActivity
             bindService(mPlayIntent, playbackConnection, Context.BIND_AUTO_CREATE);
             startService(mPlayIntent);
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiverProgressUpdate),
+                new IntentFilter(PlaybackService.PLAYBACK_PROGRESS_UPDATE));
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiverInfoUpdate),
+                new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
+    }
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverProgressUpdate);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverInfoUpdate);
+        super.onStop();
     }
 
     /**

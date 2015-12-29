@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,10 @@ public class PlayerFragment extends Fragment {
     ImageView imageAlbum;
     TextView textArtist;
     TextView textSong;
+    SeekBar songProgressbar;
+    Button buttonPlay;
+    Button buttonNextSong;
+    Button buttonPrevSong;
     private MainActivity activity;
 
     public PlayerFragment() {
@@ -45,45 +50,45 @@ public class PlayerFragment extends Fragment {
         textSong = (TextView) view.findViewById(R.id.song_title);
 
         // control views
-        final Button buttonPlay = (Button) view.findViewById(R.id.button_play);
-        final Button buttonNextSong = (Button) view.findViewById(R.id.button_next_song);
-        final Button buttonPrevSong = (Button) view.findViewById(R.id.button_prev_song);
-        final SeekBar songProgressbar = (SeekBar) view.findViewById(R.id.song_progressbar);
+        buttonPlay = (Button) view.findViewById(R.id.button_play);
+        buttonNextSong = (Button) view.findViewById(R.id.button_next_song);
+        buttonPrevSong = (Button) view.findViewById(R.id.button_prev_song);
+        songProgressbar = (SeekBar) view.findViewById(R.id.song_progressbar);
 
         activity = (MainActivity) getActivity();
+
+        activity.getToolbar().setTitle(getResources().getString(R.string.app_name));
 
         buttonPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (activity.getPlaybackService().isPlaying()) {
                     activity.getPlaybackService().pauseSong();
-                    buttonPlay.setBackgroundResource(R.drawable.ic_pause);
                 } else {
                     if (activity.getPlaybackService().getCurrentTime() > activity.getPlaybackService().getCurrentSong().duration) {
                         activity.getPlaybackService().playSong();
                     } else {
                         activity.getPlaybackService().continueSong();
                     }
-                    buttonPlay.setBackgroundResource(R.drawable.ic_play);
-                    songProgressbar.setMax(activity.getPlaybackService().getCurrentSong().duration);
                 }
-                displaySongData();
+
+                updatePlayButton();
             }
         });
 
         buttonNextSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                songProgressbar.setProgress(0);
                 activity.getPlaybackService().nextSong();
-                displaySongData();
             }
         });
 
         buttonPrevSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                songProgressbar.setProgress(0);
                 activity.getPlaybackService().prevSong();
-                displaySongData();
             }
         });
 
@@ -103,25 +108,50 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 activity.getPlaybackService().rewindTo(pos);
+                Log.i(TAG, String.format("Rewound to %d from %d",
+                        pos,
+                        activity.getPlaybackService().getCurrentSong().duration));
             }
         });
 
         return view;
     }
 
+    public void updateSongProgress(final int pos) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                songProgressbar.setProgress(pos);
+            }
+        });
+    }
+
+    public void updatePlayButton() {
+        if (activity.getPlaybackService().isPlaying()) {
+            buttonPlay.setBackgroundResource(R.drawable.ic_pause);
+        } else {
+            buttonPlay.setBackgroundResource(R.drawable.ic_play);
+        }
+    }
+
     /**
      * Load data of song to the layout.
      */
-    private void displaySongData() {
+    public void displaySongData() {
         Song currentSong = activity.getPlaybackService().getCurrentSong();
+
         textArtist.setText(currentSong.artist);
         textSong.setText(currentSong.title);
+
+        songProgressbar.setMax(currentSong.duration);
 
         Bitmap bitmap = MusicUtil.getInstance().getAlbumart(getActivity(), currentSong.albumId);
         if (bitmap == null) {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture);
         }
         imageAlbum.setImageBitmap(getScaledBitmap1to1(bitmap));
+
+        updatePlayButton();
     }
 
     /**
