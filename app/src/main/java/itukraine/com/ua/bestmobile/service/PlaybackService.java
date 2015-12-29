@@ -185,6 +185,15 @@ public class PlaybackService extends Service implements
         return mMediaPlayer.getCurrentPosition();
     }
 
+    /**
+     * Rewind current song to certain position.
+     *
+     * @param position Time in song to which song will be rewound
+     */
+    public void rewindTo(int position) {
+        mMediaPlayer.seekTo(position);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

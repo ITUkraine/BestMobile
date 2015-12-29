@@ -87,6 +87,25 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        songProgressbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int pos = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pos = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                activity.getPlaybackService().rewindTo(pos);
+            }
+        });
+
         return view;
     }
 
