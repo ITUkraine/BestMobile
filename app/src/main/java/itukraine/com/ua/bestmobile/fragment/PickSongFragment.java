@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +66,10 @@ public class PickSongFragment extends Fragment {
         addSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mAdapter.selectedSongs.size() == 0) {
+                    Toast.makeText(mContext, R.string.msg_at_least_one_song, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Playlist newPlaylist = new Playlist(playlistName);
                 newPlaylist.songsId.addAll(mAdapter.selectedSongs);
                 DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
@@ -92,6 +97,8 @@ public class PickSongFragment extends Fragment {
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
                 new OnItemClickListener()));
+
+        Toast.makeText(mContext, R.string.msg_select_songs, Toast.LENGTH_LONG).show();
 
         return view;
     }

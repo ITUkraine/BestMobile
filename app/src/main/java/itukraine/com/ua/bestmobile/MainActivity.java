@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity
         return mPlaybackService;
     }
 
+    public Toolbar getToolbar() {
+        return mToolbar;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

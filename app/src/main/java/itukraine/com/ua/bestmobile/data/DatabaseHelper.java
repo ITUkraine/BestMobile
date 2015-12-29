@@ -138,4 +138,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
     }
+
+    public void deleteSongFromPlaylist(Playlist playlist, long id) {
+        Dao dao;
+        try {
+            dao = getDao(Playlist.class);
+            UpdateBuilder<Playlist, Integer> updateBuilder = dao.updateBuilder();
+            updateBuilder.where().eq("id", playlist.id);
+            playlist.songsId.remove(id);
+            updateBuilder.updateColumnValue("songsId", playlist.songsId);
+            updateBuilder.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

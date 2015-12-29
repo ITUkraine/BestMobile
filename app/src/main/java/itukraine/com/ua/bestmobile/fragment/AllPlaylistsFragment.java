@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.dao.Playlist;
@@ -60,6 +61,8 @@ public class AllPlaylistsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
+
+        ((MainActivity) getActivity()).getToolbar().setTitle(R.string.playlists);
 
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
         addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
@@ -139,6 +142,10 @@ public class AllPlaylistsFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         String newPlaylistName = input.getText().toString();
+                        if (newPlaylistName.equals("")) {
+                            Toast.makeText(mContext, R.string.msg_at_least_one_letter, Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
                                 || DatabaseHelper.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
                             Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
@@ -190,7 +197,7 @@ public class AllPlaylistsFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case 0:
-                            //Play playlist
+                            //TODO Play playlist
                             break;
                         case 1:
                             //Rename playlist

@@ -10,7 +10,7 @@
     <string name="artist">Artist</string>
     <string name="song">Song</string>
     <string name="playback">Playback</string>
-    <string name="playlist">Playlist</string>
+    <string name="playlist">Playlists</string>
     <string name="map">Map</string>
     <string name="communicate">Communicate</string>
     <string name="share">Share</string>
@@ -25,14 +25,24 @@
     <string name="btn_create_playlist">Create</string>
     <string name="btn_rename_playlist">Rename</string>
     <string name="btn_cancel">Cancel</string>
-    <string name="msg_confirm_delete_playlist">Do you want to delete playlist</string>
+    <string name="msg_confirm_delete_playlist">Do you want to remove playlist?</string>
+    <string name="msg_confirm_delete_song">Do you want to remove song from playlist?</string>
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
+    <string name="playlists">Playlists</string>
+    <string name="msg_select_songs">Please, select songs</string>
+    <string name="msg_at_least_one_letter">Enter an least one letter</string>
+    <string name="msg_at_least_one_song">Select at least one song</string>
 
     <string-array name="playlist_action_array">
         <item>Play</item>
         <item>Rename</item>
-        <item>Delete</item>
+        <item>Remove</item>
+    </string-array>
+
+    <string-array name="song_action_array">
+        <item>Play</item>
+        <item>Remove</item>
     </string-array>
 
     <string-array name="play">
