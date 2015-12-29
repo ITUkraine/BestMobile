@@ -1,9 +1,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginLeft="@dimen/horizontical_margin_edit_text"
+    android:layout_marginRight="@dimen/horizontical_margin_edit_text"
+    android:layout_marginTop="@dimen/vertical_margin_edit_text"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,20 +11,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Please Rate Us:"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="18dp" />
-        </LinearLayout>
+            android:layout_marginLeft="@dimen/horizontical_margin_edit_text"
+            android:text="@string/please_rate_us"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/text_size_title_feedback" />
 
         <RatingBar
             android:id="@+id/rating"
@@ -32,46 +26,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/vertical_margin_rating_bar"
             android:rating="3"
             android:soundEffectsEnabled="true" />
 
-        <LinearLayout
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Write Your Feedback:"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="18dp" />
-        </LinearLayout>
+            android:layout_marginLeft="@dimen/horizontical_margin_edit_text"
+            android:text="@string/write_your_feedback"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/text_size_title_feedback" />
 
 
         <EditText
             android:id="@+id/feedback_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="15dp"
-            android:hint="Write here..."
-            android:textSize="15dp" />
+            android:layout_marginLeft="@dimen/horizontical_margin_edit_text"
+            android:layout_marginRight="@dimen/horizontical_margin_edit_text"
+            android:layout_marginTop="@dimen/vertical_margin_edit_text"
+            android:hint="@string/msg_write_here"
+            android:textSize="@dimen/text_size_feedback" />
 
         <Button
             android:id="@+id/btn_send_feedback"
-            android:layout_width="200dp"
-            android:layout_height="45dp"
+            android:layout_width="@dimen/btn_feedback_width"
+            android:layout_height="@dimen/btn_feedback_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginBottom="@dimen/btn_feedback_margin_bottom"
+            android:layout_marginTop="@dimen/btn_feedback_margin_top"
             android:background="@drawable/black_button"
-            android:text="Submit" />
+            android:text="@string/btn_send_feedback" />
     </LinearLayout>
 
 </ScrollView>

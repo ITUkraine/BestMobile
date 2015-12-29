@@ -12,4 +12,13 @@
     <dimen name="main_song_size">20sp</dimen>
     <dimen name="main_artist_size">25sp</dimen>
     <dimen name="main_song_info_margin">1dp</dimen>
+    <dimen name="btn_feedback_width">200dp</dimen>
+    <dimen name="btn_feedback_height">45dp</dimen>
+    <dimen name="btn_feedback_margin_bottom">7dp</dimen>
+    <dimen name="btn_feedback_margin_top">60dp</dimen>
+    <dimen name="horizontical_margin_edit_text">10dp</dimen>
+    <dimen name="vertical_margin_edit_text">15dp</dimen>
+    <dimen name="text_size_feedback">15sp</dimen>
+    <dimen name="text_size_title_feedback">18sp</dimen>
+    <dimen name="vertical_margin_rating_bar">20dp</dimen>
 </resources>
