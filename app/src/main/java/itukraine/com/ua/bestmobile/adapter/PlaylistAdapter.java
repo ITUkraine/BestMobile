@@ -54,11 +54,11 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
         if (getItem(position).name.equals(context.getResources().getString(R.string.all_songs_playlist_name))) {
             holder.mPlaylistDuration.setText(
-                    TimeUtil.getInstance().convertMillis(
+                    TimeUtil.getInstance().formatTime(
                             TimeUtil.getInstance().calculateTotalTimeOfPlaylist(
                                     MusicUtil.getInstance().getAllSongs(context))));
         } else {
-            holder.mPlaylistDuration.setText(TimeUtil.getInstance().convertMillis(getItem(position).totalTime));
+            holder.mPlaylistDuration.setText(TimeUtil.getInstance().formatTime(getItem(position).totalTime));
         }
     }
 

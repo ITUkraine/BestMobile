@@ -19,6 +19,7 @@ import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.dao.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
+import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +34,8 @@ public class PlayerFragment extends Fragment {
     Button buttonPlay;
     Button buttonNextSong;
     Button buttonPrevSong;
+    TextView textCurrentTime;
+    TextView textTotalDuration;
     private MainActivity activity;
 
     public PlayerFragment() {
@@ -48,6 +51,8 @@ public class PlayerFragment extends Fragment {
         imageAlbum = (ImageView) view.findViewById(R.id.song_picture);
         textArtist = (TextView) view.findViewById(R.id.song_artist);
         textSong = (TextView) view.findViewById(R.id.song_title);
+        textCurrentTime = (TextView) view.findViewById(R.id.text_current_time);
+        textTotalDuration = (TextView) view.findViewById(R.id.text_total_duration);
 
         // control views
         buttonPlay = (Button) view.findViewById(R.id.button_play);
@@ -122,6 +127,7 @@ public class PlayerFragment extends Fragment {
             @Override
             public void run() {
                 songProgressbar.setProgress(pos);
+                textCurrentTime.setText(TimeUtil.getInstance().formatTime(activity.getPlaybackService().getCurrentTime()));
             }
         });
     }
@@ -142,6 +148,8 @@ public class PlayerFragment extends Fragment {
 
         textArtist.setText(currentSong.artist);
         textSong.setText(currentSong.title);
+
+        textTotalDuration.setText(TimeUtil.getInstance().formatTime(currentSong.duration));
 
         songProgressbar.setMax(currentSong.duration);
 

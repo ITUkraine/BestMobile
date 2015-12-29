@@ -33,6 +33,7 @@
     <string name="msg_select_songs">Please, select songs</string>
     <string name="msg_at_least_one_letter">Enter an least one letter</string>
     <string name="msg_at_least_one_song">Select at least one song</string>
+    <string name="default_duration">00:00</string>
 
     <string-array name="playlist_action_array">
         <item>Play</item>
