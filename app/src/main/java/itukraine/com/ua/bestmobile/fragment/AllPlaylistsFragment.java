@@ -65,7 +65,7 @@ public class AllPlaylistsFragment extends Fragment {
         ((MainActivity) getActivity()).getToolbar().setTitle(R.string.playlists);
 
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
-        addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+        addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
         addPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

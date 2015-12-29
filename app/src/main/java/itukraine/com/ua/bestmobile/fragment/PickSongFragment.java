@@ -66,7 +66,7 @@ public class PickSongFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.songs_view);
 
         addSongsButton = (FloatingActionButton) view.findViewById(R.id.add_songs_to_playlist);
-        addSongsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+        addSongsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
         addSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
