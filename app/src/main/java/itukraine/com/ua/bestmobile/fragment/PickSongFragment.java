@@ -32,6 +32,8 @@ public class PickSongFragment extends Fragment {
 
     private static final String TAG = PickSongFragment.class.getCanonicalName();
 
+    private boolean isNewPlaylist;
+
     private RecyclerView mRecyclerView;
     private PickSongAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -51,8 +53,9 @@ public class PickSongFragment extends Fragment {
     public PickSongFragment() {
     }
 
-    public PickSongFragment(String playlistName) {
+    public PickSongFragment(String playlistName, boolean isNewPlaylist) {
         this.playlistName = playlistName;
+        this.isNewPlaylist = isNewPlaylist;
     }
 
     @Override
@@ -70,9 +73,15 @@ public class PickSongFragment extends Fragment {
                     Toast.makeText(mContext, R.string.msg_at_least_one_song, Toast.LENGTH_LONG).show();
                     return;
                 }
-                Playlist newPlaylist = new Playlist(playlistName);
-                newPlaylist.songsId.addAll(mAdapter.selectedSongs);
-                DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
+                if (isNewPlaylist) {
+                    Playlist newPlaylist = new Playlist(playlistName);
+                    newPlaylist.songsId.clear();
+                    newPlaylist.songsId.addAll(mAdapter.selectedSongs);
+                    DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
+                } else {
+                    Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);
+                    DatabaseHelper.getInstance(mContext).changeListOfSongsInPlaylist(playlist, mAdapter.selectedSongs);
+                }
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new AllPlaylistsFragment()).commit();
             }
@@ -90,7 +99,7 @@ public class PickSongFragment extends Fragment {
 
         Collections.sort(allSongs, alphabeticalSongComparator);
 
-        mAdapter = new PickSongAdapter(mContext, allSongs);
+        mAdapter = new PickSongAdapter(mContext, allSongs, playlistName, isNewPlaylist);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));

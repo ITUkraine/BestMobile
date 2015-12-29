@@ -14,23 +14,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.data.DatabaseHelper;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
 
     private static final String TAG = PickSongAdapter.class.getCanonicalName();
-
     public List<Long> selectedSongs = new ArrayList<>();
-
+    private String playlistName;
+    private boolean isNewPlaylist;
     private List<Song> allSongs;
 
     private Context mContext;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public PickSongAdapter(Context context, List<Song> allSongs) {
+    public PickSongAdapter(Context context, List<Song> allSongs, String playlistName, boolean isNewPlaylist) {
         this.allSongs = allSongs;
-        mContext = context;
+        this.mContext = context;
+        this.isNewPlaylist = isNewPlaylist;
+        this.playlistName = playlistName;
+        if (!isNewPlaylist) {
+            Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);
+            selectedSongs = playlist.songsId;
+        }
     }
 
     // Create new views (invoked by the layout manager)

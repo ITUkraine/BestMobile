@@ -3,6 +3,7 @@ package itukraine.com.ua.bestmobile.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ public class SongListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SongAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private FloatingActionButton buttonAddSongsToPlaylist;
 
     private Context mContext;
 
@@ -49,17 +51,22 @@ public class SongListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_song_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.songs_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+        buttonAddSongsToPlaylist = (FloatingActionButton) view.findViewById(R.id.add_song_button);
+        buttonAddSongsToPlaylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().
+                        replace(R.id.main_fragment, new PickSongFragment(currentPlaylist.name, false)).addToBackStack(null).commit();
+            }
+        });
+
         mRecyclerView.setHasFixedSize(true);
 
         ((MainActivity) getActivity()).getToolbar().setTitle(currentPlaylist.name);
 
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // load all songs from device if it's default playlist
         if (currentPlaylist.name.equals(getResources().getString(R.string.all_songs_playlist_name))) {
             songList = MusicUtil.getInstance().getAllSongs(mContext);
         } else {

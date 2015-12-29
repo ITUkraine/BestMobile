@@ -160,7 +160,7 @@ public class AllPlaylistsFragment extends Fragment {
                             return;
                         }
                         mAlertDialog.cancel();
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName)).addToBackStack(null).commit();
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName, true)).addToBackStack(null).commit();
                     }
                 });
 

@@ -152,4 +152,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
     }
+
+    public void changeListOfSongsInPlaylist(Playlist playlist, List<Long> songsId) {
+        Dao dao;
+        try {
+            Log.i(TAG, "Songs: " + songsId);
+            Log.i(TAG, "Playlist id: " + playlist.id);
+            dao = getDao(Playlist.class);
+            UpdateBuilder<Playlist, Integer> updateBuilder = dao.updateBuilder();
+            updateBuilder.where().eq("id", playlist.id);
+            updateBuilder.updateColumnValue("songsId", songsId);
+            updateBuilder.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
