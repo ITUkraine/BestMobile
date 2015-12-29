@@ -23,6 +23,7 @@ import itukraine.com.ua.bestmobile.dao.Song;
 import itukraine.com.ua.bestmobile.data.DatabaseHelper;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
+import itukraine.com.ua.bestmobile.util.TimeUtil;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
 /**
@@ -77,6 +78,7 @@ public class PickSongFragment extends Fragment {
                     Playlist newPlaylist = new Playlist(playlistName);
                     newPlaylist.songsId.clear();
                     newPlaylist.songsId.addAll(mAdapter.selectedSongs);
+                    newPlaylist.totalTime = TimeUtil.getInstance().calculateTotalTimeOfPlaylist(MusicUtil.getInstance().getSongsByID(mContext, newPlaylist.songsId));
                     DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
                 } else {
                     Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);

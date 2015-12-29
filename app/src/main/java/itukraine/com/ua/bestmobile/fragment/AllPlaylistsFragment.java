@@ -86,7 +86,7 @@ public class AllPlaylistsFragment extends Fragment {
 
         Collections.sort(playlists, alphabeticalPlaylistComparator);
 
-        mAdapter = new PlaylistAdapter(playlists);
+        mAdapter = new PlaylistAdapter(mContext, playlists);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));

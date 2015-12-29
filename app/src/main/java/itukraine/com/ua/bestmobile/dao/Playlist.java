@@ -12,7 +12,7 @@ public class Playlist {
     @DatabaseField
     public String name;
     @DatabaseField
-    public String totalTime;
+    public int totalTime;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     public ArrayList<Long> songsId = new ArrayList<>();
