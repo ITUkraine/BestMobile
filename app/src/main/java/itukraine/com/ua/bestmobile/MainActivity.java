@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
+import itukraine.com.ua.bestmobile.fragment.FeedbackFragment;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
@@ -185,15 +186,9 @@ public class MainActivity extends AppCompatActivity
             openFragment(new PlayerFragment());
         } else if (id == R.id.nav_playlist) {
             openFragment(new AllPlaylistsFragment());
-        } /*else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
+        } else if (id == R.id.nav_feedback) {
+            openFragment(new FeedbackFragment());
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -227,4 +222,5 @@ public class MainActivity extends AppCompatActivity
         mPlaybackService = null;
         super.onDestroy();
     }
+
 }
