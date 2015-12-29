@@ -74,15 +74,14 @@ public class PickSongFragment extends Fragment {
                     Toast.makeText(mContext, R.string.msg_at_least_one_song, Toast.LENGTH_LONG).show();
                     return;
                 }
+                Playlist newPlaylist = new Playlist(playlistName);
+                newPlaylist.songsId.clear();
+                newPlaylist.songsId.addAll(mAdapter.selectedSongs);
+                newPlaylist.totalTime = TimeUtil.getInstance().calculateTotalTimeOfPlaylist(MusicUtil.getInstance().getSongsByID(mContext, newPlaylist.songsId));
                 if (isNewPlaylist) {
-                    Playlist newPlaylist = new Playlist(playlistName);
-                    newPlaylist.songsId.clear();
-                    newPlaylist.songsId.addAll(mAdapter.selectedSongs);
-                    newPlaylist.totalTime = TimeUtil.getInstance().calculateTotalTimeOfPlaylist(MusicUtil.getInstance().getSongsByID(mContext, newPlaylist.songsId));
                     DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
                 } else {
-                    Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);
-                    DatabaseHelper.getInstance(mContext).changeListOfSongsInPlaylist(playlist, mAdapter.selectedSongs);
+                    DatabaseHelper.getInstance(mContext).updatePlaylist(newPlaylist);
                 }
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new AllPlaylistsFragment()).commit();

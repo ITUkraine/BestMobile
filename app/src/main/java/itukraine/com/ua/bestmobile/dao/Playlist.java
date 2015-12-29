@@ -7,9 +7,7 @@ import java.util.ArrayList;
 
 public class Playlist {
 
-    @DatabaseField(generatedId = true)
-    public int id;
-    @DatabaseField
+    @DatabaseField(id = true)
     public String name;
     @DatabaseField
     public int totalTime;
@@ -27,8 +25,7 @@ public class Playlist {
     @Override
     public String toString() {
         return "Playlist{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", totalTime='" + totalTime + '\'' +
                 ", songsId=" + songsId +
                 '}';

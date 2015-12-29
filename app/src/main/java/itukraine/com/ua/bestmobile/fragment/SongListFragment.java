@@ -52,6 +52,8 @@ public class SongListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.songs_view);
 
         buttonAddSongsToPlaylist = (FloatingActionButton) view.findViewById(R.id.add_song_button);
+        buttonAddSongsToPlaylist.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+        buttonAddSongsToPlaylist.setVisibility(currentPlaylist.name.equals(getResources().getString(R.string.all_songs_playlist_name)) ? View.GONE : View.VISIBLE);
         buttonAddSongsToPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +98,8 @@ public class SongListFragment extends Fragment {
                 .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
-                DatabaseHelper.getInstance(mContext).deleteSongFromPlaylist(currentPlaylist, songList.get(position).id);
+                currentPlaylist.songsId.remove(songList.get(position).id);
+                DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
                 songList.remove(position);
                 mAdapter.notifyItemChanged(position);
             }
