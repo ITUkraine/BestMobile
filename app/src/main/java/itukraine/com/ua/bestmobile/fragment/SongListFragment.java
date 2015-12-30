@@ -8,9 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -32,6 +36,9 @@ public class SongListFragment extends Fragment {
     private SongAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FloatingActionButton buttonAddSongsToPlaylist;
+
+    private EditText editSearch;
+    private ImageView imageClearSearch;
 
     private Context mContext;
 
@@ -65,6 +72,35 @@ public class SongListFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         ((MainActivity) getActivity()).getToolbar().setTitle(currentPlaylist.name);
+
+        imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
+        imageClearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((SongAdapter) mRecyclerView.getAdapter()).flushFilter();
+                imageClearSearch.setVisibility(View.GONE);
+                editSearch.setText("");
+            }
+        });
+        editSearch = (EditText) view.findViewById(R.id.editSearch);
+        editSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = editSearch.getText().toString();
+                ((SongAdapter) mRecyclerView.getAdapter()).setFilter(query);
+                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);

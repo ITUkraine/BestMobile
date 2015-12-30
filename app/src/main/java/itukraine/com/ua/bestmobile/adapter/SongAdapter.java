@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
@@ -19,12 +20,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     private static final String TAG = SongAdapter.class.getCanonicalName();
 
-    public List<Song> songsInPlaylist;
+    public List<Song> visibleSongs;
+    public List<Song> allSongs;
     private Context mContext;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SongAdapter(Context context, List<Song> songsInPlaylist) {
-        this.songsInPlaylist = songsInPlaylist;
+    public SongAdapter(Context context, List<Song> songs) {
+        this.allSongs = songs;
+        this.visibleSongs = songs;
         mContext = context;
     }
 
@@ -45,7 +48,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
     private Song getItem(int pos) {
-        return songsInPlaylist.get(pos);
+        return visibleSongs.get(pos);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -64,7 +67,24 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return songsInPlaylist.size();
+        return visibleSongs.size();
+    }
+
+    public void flushFilter() {
+        visibleSongs = new ArrayList<>();
+        visibleSongs.addAll(allSongs);
+        notifyDataSetChanged();
+    }
+
+    public void setFilter(String queryText) {
+
+        visibleSongs = new ArrayList<>();
+        for (Song song : allSongs) {
+            if (song.artist.toLowerCase().contains(queryText.toLowerCase())
+                    || song.title.toLowerCase().contains(queryText.toLowerCase()))
+                visibleSongs.add(song);
+        }
+        notifyDataSetChanged();
     }
 
     // Provide a reference to the views for each data item
