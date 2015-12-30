@@ -144,6 +144,7 @@ public class PlaybackService extends Service implements
 
     public void setSongs(List<Song> songs) {
         this.mSongs = songs;
+        songPos = 0;
     }
 
     public void pauseSong() {
