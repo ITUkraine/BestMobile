@@ -97,17 +97,17 @@
 
         <Button
             android:id="@+id/button_shufle"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_margin="@dimen/margin_player_btn"
-            android:background="@drawable/ic_shufle" />
+            android:background="@drawable/ic_shuffle_off" />
 
         <Button
             android:id="@+id/button_prev_song"
-            android:layout_width="@dimen/size_player_btn"
-            android:layout_height="@dimen/size_player_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_margin="@dimen/margin_player_btn"
-            android:background="@drawable/ic_prev_song" />
+            android:background="@drawable/ic_prev" />
 
         <Button
             android:id="@+id/button_play"
@@ -118,17 +118,17 @@
 
         <Button
             android:id="@+id/button_next_song"
-            android:layout_width="@dimen/size_player_btn"
-            android:layout_height="@dimen/size_player_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_margin="@dimen/margin_player_btn"
-            android:background="@drawable/ic_next_song" />
+            android:background="@drawable/ic_next" />
 
         <Button
             android:id="@+id/button_repeat"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_margin="@dimen/margin_player_btn"
-            android:background="@drawable/ic_repeat" />
+            android:background="@drawable/ic_repeat_off" />
 
     </LinearLayout>
 
