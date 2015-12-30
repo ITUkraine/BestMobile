@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.util.ImageUtil;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
@@ -73,15 +73,7 @@ public class PlayerFragment extends Fragment {
         buttonPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (activity.getPlaybackService().isPlaying()) {
-                    activity.getPlaybackService().pauseSong();
-                } else {
-                    if (activity.getPlaybackService().getCurrentTime() > activity.getPlaybackService().getCurrentSong().duration) {
-                        activity.getPlaybackService().playSong();
-                    } else {
-                        activity.getPlaybackService().continueSong();
-                    }
-                }
+                activity.getPlaybackService().smartPlay();
 
                 updatePlayButton();
             }
@@ -146,6 +138,12 @@ public class PlayerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "Resume");
+    }
+
     /**
      * Load data of song to the layout.
      */
@@ -163,21 +161,10 @@ public class PlayerFragment extends Fragment {
         if (bitmap == null) {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture);
         }
-        imageAlbum.setImageBitmap(getScaledBitmap1to1(bitmap));
+        imageAlbum.setImageBitmap(ImageUtil.getInstance().getScaledBitmap1to1(activity, bitmap));
 
         updatePlayButton();
     }
 
-    /**
-     * Scale bitmap in aspect ratio 1:1 based on width
-     *
-     * @param source Bitmap which need to be scaled
-     * @return Scaled bitmap
-     */
-    private Bitmap getScaledBitmap1to1(Bitmap source) {
-        DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-        int newWidth = metrics.widthPixels;
-        return Bitmap.createScaledBitmap(source, newWidth, newWidth, true);
-    }
 
 }

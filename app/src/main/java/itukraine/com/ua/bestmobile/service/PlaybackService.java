@@ -225,6 +225,22 @@ public class PlaybackService extends Service implements
         mMediaPlayer.seekTo(position);
     }
 
+    /**
+     * Choose what action perform when song wasn't played yet,
+     * was at pause or have played for a some period of time already.
+     */
+    public void smartPlay() {
+        if (isPlaying()) {
+            pauseSong();
+        } else {
+            if (getCurrentTime() > getCurrentSong().duration) {
+                playSong();
+            } else {
+                continueSong();
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
