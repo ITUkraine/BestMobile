@@ -7,9 +7,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -39,6 +43,8 @@ public class PickSongFragment extends Fragment {
     private PickSongAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private EditText editSearch;
+    private ImageView imageClearSearch;
     private FloatingActionButton addSongsButton;
 
     private Context mContext;
@@ -64,6 +70,35 @@ public class PickSongFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pick_song_fragment, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.songs_view);
+
+        imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
+        imageClearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((PickSongAdapter) mRecyclerView.getAdapter()).flushFilter();
+                imageClearSearch.setVisibility(View.GONE);
+                editSearch.setText("");
+            }
+        });
+        editSearch = (EditText) view.findViewById(R.id.editSearch);
+        editSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = editSearch.getText().toString();
+                ((PickSongAdapter) mRecyclerView.getAdapter()).setFilter(query);
+                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         addSongsButton = (FloatingActionButton) view.findViewById(R.id.add_songs_to_playlist);
         addSongsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
@@ -123,10 +158,10 @@ public class PickSongFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-            if (!mAdapter.selectedSongs.contains(allSongs.get(position).id)) {
-                mAdapter.selectedSongs.add(allSongs.get(position).id);
+            if (!mAdapter.selectedSongs.contains(mAdapter.visibleSongs.get(position).id)) {
+                mAdapter.selectedSongs.add(mAdapter.visibleSongs.get(position).id);
             } else {
-                mAdapter.selectedSongs.remove(allSongs.get(position).id);
+                mAdapter.selectedSongs.remove(mAdapter.visibleSongs.get(position).id);
             }
             mAdapter.notifyItemChanged(position);
         }
