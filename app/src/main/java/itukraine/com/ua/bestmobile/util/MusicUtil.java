@@ -14,6 +14,7 @@ import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.dao.Song;
 
 public class MusicUtil {
@@ -179,6 +180,10 @@ public class MusicUtil {
         song.albumId = cursor.getLong(cursor
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
         return song;
+    }
+
+    public int getSongPositionInPlaylistById(Playlist playlist, Long songId) {
+        return playlist.songsId.indexOf(songId);
     }
 
 }
