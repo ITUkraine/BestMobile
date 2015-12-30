@@ -128,19 +128,26 @@ public class SongListFragment extends Fragment {
     }
 
     private void displayConfirmDeleteDialog(final int position) {
+        //If it is last song, we propose to delete playlist
+        final boolean isLastSong = currentPlaylist.songsId.size() == 1;
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(
-                mContext.getString(R.string.msg_confirm_delete_song))
+                mContext.getString(isLastSong ? R.string.msg_confirm_delete_playlist : R.string.msg_confirm_delete_song))
                 .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
-                currentPlaylist.songsId.remove(songList.get(position).id);
-                currentPlaylist.totalTime -= MusicUtil.getInstance().getSongByID(mContext, songList.get(position).id).duration;
-                DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
-                songList.remove(position);
-                //Performance with notifyItemChanged() will be better,
-                // but exist issue https://code.google.com/p/android/issues/detail?id=77846
-                mAdapter.notifyDataSetChanged();
+                if (isLastSong) {
+                    DatabaseHelper.getInstance(mContext).deletePlaylistByName(currentPlaylist.name);
+                    getActivity().onBackPressed();
+                } else {
+                    currentPlaylist.songsId.remove(songList.get(position).id);
+                    currentPlaylist.totalTime -= MusicUtil.getInstance().getSongByID(mContext, songList.get(position).id).duration;
+                    DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
+                    songList.remove(position);
+                    //Performance with notifyItemChanged() will be better,
+                    // but exist issue https://code.google.com/p/android/issues/detail?id=77846
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         }).setNegativeButton(mContext.getString(R.string.btn_no), new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
