@@ -102,6 +102,7 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 pos = progress;
+                textCurrentTime.setText(TimeUtil.getInstance().formatTime(progress));
             }
 
             @Override
