@@ -23,18 +23,15 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
 
     private static final String TAG = PickSongAdapter.class.getCanonicalName();
     public List<Long> selectedSongs = new ArrayList<>();
-    private String playlistName;
-    private boolean isNewPlaylist;
+    public List<Song> visibleSongs;
     private List<Song> allSongs;
-
     private Context mContext;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public PickSongAdapter(Context context, List<Song> allSongs, String playlistName, boolean isNewPlaylist) {
         this.allSongs = allSongs;
+        this.visibleSongs = allSongs;
         this.mContext = context;
-        this.isNewPlaylist = isNewPlaylist;
-        this.playlistName = playlistName;
         if (!isNewPlaylist) {
             Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);
             selectedSongs = playlist.songsId;
@@ -59,7 +56,7 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
     }
 
     private Song getItem(int pos) {
-        return allSongs.get(pos);
+        return visibleSongs.get(pos);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -80,7 +77,24 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return allSongs.size();
+        return visibleSongs.size();
+    }
+
+    public void flushFilter() {
+        visibleSongs = new ArrayList<>();
+        visibleSongs.addAll(allSongs);
+        notifyDataSetChanged();
+    }
+
+    public void setFilter(String queryText) {
+
+        visibleSongs = new ArrayList<>();
+        for (Song song : allSongs) {
+            if (song.artist.toLowerCase().contains(queryText.toLowerCase())
+                    || song.title.toLowerCase().contains(queryText.toLowerCase()))
+                visibleSongs.add(song);
+        }
+        notifyDataSetChanged();
     }
 
     // Provide a reference to the views for each data item
