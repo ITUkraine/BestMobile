@@ -21,6 +21,14 @@ public class PrefUtil {
         getPrefs(paramContext).edit().putString("currentPlaylistName", currentPlaylistName).commit();
     }
 
+    public static Long getCurrentSongId(Context paramContext) {
+        return getPrefs(paramContext).getLong("currentSongId", -1);
+    }
+
+    public static void setCurrentSongId(Context paramContext, Long currentSongId) {
+        getPrefs(paramContext).edit().putLong("currentSongId", currentSongId).commit();
+    }
+
     public static int getShuffleType(Context paramContext) {
         return getPrefs(paramContext).getInt("shuffleType", 0);
     }
