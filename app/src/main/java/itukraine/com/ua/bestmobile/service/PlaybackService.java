@@ -97,6 +97,9 @@ public class PlaybackService extends Service implements
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // display song info at first run
+        sendInfoUpdate();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
