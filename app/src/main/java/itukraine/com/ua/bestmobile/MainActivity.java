@@ -32,18 +32,16 @@ import itukraine.com.ua.bestmobile.util.MusicUtil;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private Toolbar mToolbar;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
     private View mNavHeaderView;
-
     private PlaybackService mPlaybackService;
     private Intent mPlayIntent;
     private boolean mMusicBound = false;
-
     private BroadcastReceiver receiverProgressUpdate;
     private BroadcastReceiver receiverInfoUpdate;
-
     //connection to the service
     private ServiceConnection playbackConnection = new ServiceConnection() {
 

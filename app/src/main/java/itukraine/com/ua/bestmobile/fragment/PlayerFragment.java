@@ -64,6 +64,12 @@ public class PlayerFragment extends Fragment {
 
         activity.getToolbar().setTitle(getResources().getString(R.string.app_name));
 
+
+        // Display song data when fragment has created already if PlaybackService exist.
+        if (activity.getPlaybackService() != null) {
+            displaySongData();
+        }
+
         buttonPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
