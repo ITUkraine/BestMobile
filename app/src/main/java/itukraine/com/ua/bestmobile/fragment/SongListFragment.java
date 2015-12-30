@@ -135,6 +135,7 @@ public class SongListFragment extends Fragment {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
                 currentPlaylist.songsId.remove(songList.get(position).id);
+                currentPlaylist.totalTime -= MusicUtil.getInstance().getSongByID(mContext, songList.get(position).id).duration;
                 DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
                 songList.remove(position);
                 //Performance with notifyItemChanged() will be better,
