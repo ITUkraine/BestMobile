@@ -29,6 +29,7 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
@@ -49,6 +50,8 @@ public class AllPlaylistsFragment extends Fragment {
 
     private Context mContext;
 
+    private MainActivity activity;
+
     private List<Playlist> playlists;
 
     private Comparator<Playlist> alphabeticalPlaylistComparator = new Comparator<Playlist>() {
@@ -67,7 +70,10 @@ public class AllPlaylistsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
 
-        ((MainActivity) getActivity()).getToolbar().setTitle(R.string.playlists);
+
+        activity = (MainActivity) getActivity();
+
+        activity.getToolbar().setTitle(R.string.playlists);
 
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
@@ -225,14 +231,24 @@ public class AllPlaylistsFragment extends Fragment {
         @Override
         public void onItemLongPress(View childView, final int position) {
 
-            boolean isDefaultPlaylist = playlists.get(position).name.equals(getResources().getString(R.string.all_songs_playlist_name));
+            final boolean isDefaultPlaylist = playlists.get(position).name.equals(getResources().getString(R.string.all_songs_playlist_name));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setItems(isDefaultPlaylist ? R.array.play : R.array.playlist_action_array, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case 0:
-                            //TODO Play playlist
+                            // Play playlist
+                            if (isDefaultPlaylist) {
+                                activity.getPlaybackService().setSongs(
+                                        MusicUtil.getInstance().getAllSongs(mContext));
+                            } else {
+                                activity.getPlaybackService().setSongs(
+                                        MusicUtil.getInstance().getSongsByID(
+                                                mContext,
+                                                playlists.get(position).songsId));
+                            }
+                            activity.getPlaybackService().playSong();
                             break;
                         case 1:
                             //Rename playlist
