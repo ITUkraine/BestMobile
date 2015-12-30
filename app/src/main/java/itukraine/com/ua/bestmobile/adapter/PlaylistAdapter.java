@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
@@ -19,13 +20,15 @@ import itukraine.com.ua.bestmobile.util.TimeUtil;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
     private static final String TAG = PlayerFragment.class.getCanonicalName();
-    public List<Playlist> playlists;
+    public List<Playlist> allPlaylists;
+    public List<Playlist> visiblePlaylists;
     private Context context;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public PlaylistAdapter(Context context, List<Playlist> playlists) {
         this.context = context;
-        this.playlists = playlists;
+        this.allPlaylists = playlists;
+        this.visiblePlaylists = playlists;
     }
 
     // Create new views (invoked by the layout manager)
@@ -44,7 +47,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     }
 
     private Playlist getItem(int pos) {
-        return playlists.get(pos);
+        return visiblePlaylists.get(pos);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -65,7 +68,23 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return playlists.size();
+        return visiblePlaylists.size();
+    }
+
+    public void flushFilter() {
+        visiblePlaylists = new ArrayList<>();
+        visiblePlaylists.addAll(allPlaylists);
+        notifyDataSetChanged();
+    }
+
+    public void setFilter(String queryText) {
+
+        visiblePlaylists = new ArrayList<>();
+        for (Playlist playlist : allPlaylists) {
+            if (playlist.name.toLowerCase().contains(queryText.toLowerCase()))
+                visiblePlaylists.add(playlist);
+        }
+        notifyDataSetChanged();
     }
 
     // Provide a reference to the views for each data item
@@ -81,4 +100,5 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         }
 
     }
+
 }

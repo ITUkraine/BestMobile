@@ -5,11 +5,44 @@
     android:background="#303030"
     tools:context="itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/playlist_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/frameSearch"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-5dp">
+
+            <EditText
+                android:id="@+id/editSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@android:drawable/ic_menu_search"
+                android:paddingRight="48dp" />
+
+            <ImageView
+                android:id="@+id/imageClearSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="12dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/playlist_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
+
+            <requestFocus />
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_playlist_button"

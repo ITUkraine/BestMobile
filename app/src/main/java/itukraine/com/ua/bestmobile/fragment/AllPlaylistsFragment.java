@@ -10,11 +10,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -40,6 +43,8 @@ public class AllPlaylistsFragment extends Fragment {
     private PlaylistAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private EditText editSearch;
+    private ImageView imageClearSearch;
     private FloatingActionButton addPlaylistButton;
 
     private Context mContext;
@@ -63,6 +68,36 @@ public class AllPlaylistsFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
 
         ((MainActivity) getActivity()).getToolbar().setTitle(R.string.playlists);
+
+        imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
+        imageClearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((PlaylistAdapter) mRecyclerView.getAdapter()).flushFilter();
+                imageClearSearch.setVisibility(View.GONE);
+                editSearch.setText("");
+            }
+        });
+        editSearch = (EditText) view.findViewById(R.id.editSearch);
+        editSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = editSearch.getText().toString();
+                ((PlaylistAdapter) mRecyclerView.getAdapter()).setFilter(query);
+                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
 
         addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
         addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
