@@ -147,6 +147,10 @@ public class PlaybackService extends Service implements
         songPos = 0;
     }
 
+    public void setSongIndex(int pos) {
+        songPos = pos;
+    }
+
     public void pauseSong() {
         mMediaPlayer.pause();
         mNM.cancel(NOTIFICATION_ID);

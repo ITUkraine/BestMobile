@@ -41,6 +41,7 @@ public class SongListFragment extends Fragment {
     private ImageView imageClearSearch;
 
     private Context mContext;
+    private MainActivity activity;
 
     private List<Song> songList; // TODO don't really know if it's needed
     private Playlist currentPlaylist;
@@ -71,7 +72,8 @@ public class SongListFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
 
-        ((MainActivity) getActivity()).getToolbar().setTitle(currentPlaylist.name);
+        activity = (MainActivity) getActivity();
+        activity.getToolbar().setTitle(currentPlaylist.name);
 
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
@@ -157,11 +159,22 @@ public class SongListFragment extends Fragment {
         builder.show();
     }
 
+    private void playSelectedPlaylist(int position) {
+        activity.getPlaybackService().setSongs(songList);
+        activity.getPlaybackService().setSongIndex(position);
+        activity.getPlaybackService().playSong();
+    }
+
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
         public void onItemClick(View childView, int position) {
-            // TODO open player???
+            playSelectedPlaylist(position);
+            // open player fragment on single click on song
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, new PlayerFragment())
+                    .addToBackStack(null)
+                    .commit();
         }
 
         @Override
@@ -171,7 +184,8 @@ public class SongListFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case 0:
-                            //TODO Play song
+                            // Play song
+                            playSelectedPlaylist(position);
                             break;
                         case 1:
                             //Delete song
