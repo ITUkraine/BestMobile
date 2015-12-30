@@ -101,7 +101,9 @@ public class SongListFragment extends Fragment {
                 currentPlaylist.songsId.remove(songList.get(position).id);
                 DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
                 songList.remove(position);
-                mAdapter.notifyItemChanged(position);
+                //Performance with notifyItemChanged() will be better,
+                // but exist issue https://code.google.com/p/android/issues/detail?id=77846
+                mAdapter.notifyDataSetChanged();
             }
         }).setNegativeButton(mContext.getString(R.string.btn_no), new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
