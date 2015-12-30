@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -75,12 +76,13 @@ public class PlaybackService extends Service implements
 
         // Set the info for the views that show in the notification panel.
         Notification notification = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.default_song_picture)  // the status icon
-                .setContentTitle(getResources().getString(R.string.app_name))  // the label of the entry
-                .setContentText("artist-song")  // TODO the contents of the entry
-                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture))
+                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setContentTitle(getCurrentSong().artist)  // the artist
+                .setContentText(getCurrentSong().title)  // the song title
+                .setContentIntent(contentIntent)// The intent to send when the entry is clicked
+                .setWhen(0)
                 .build();
-
         // Send the notification.
         mNM.notify(NOTIFICATION_ID, notification);
     }
