@@ -160,7 +160,7 @@ public class SongListFragment extends Fragment {
     }
 
     private void playSelectedPlaylist(int position) {
-        activity.getPlaybackService().setSongs(songList);
+        activity.getPlaybackService().setPlaylist(currentPlaylist);
         activity.getPlaybackService().setSongIndex(position);
         activity.getPlaybackService().playSong();
     }

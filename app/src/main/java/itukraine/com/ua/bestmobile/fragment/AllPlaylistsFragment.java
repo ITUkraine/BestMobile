@@ -240,13 +240,12 @@ public class AllPlaylistsFragment extends Fragment {
                         case 0:
                             // Play playlist
                             if (isDefaultPlaylist) {
-                                activity.getPlaybackService().setSongs(
-                                        MusicUtil.getInstance().getAllSongs(mContext));
+                                activity.getPlaybackService().setPlaylist(
+                                        MusicUtil.getInstance().getAllSongsPlaylist(mContext));
                             } else {
-                                activity.getPlaybackService().setSongs(
-                                        MusicUtil.getInstance().getSongsByID(
-                                                mContext,
-                                                playlists.get(position).songsId));
+                                activity.getPlaybackService().setPlaylist(
+                                        DatabaseHelper.getInstance(mContext)
+                                                .findPlaylistByName(playlists.get(position).name));
                             }
                             activity.getPlaybackService().playSong();
                             break;

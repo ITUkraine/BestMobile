@@ -22,7 +22,11 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.util.MusicUtil;
+import itukraine.com.ua.bestmobile.util.PrefUtil;
 
 public class PlaybackService extends Service implements
         MediaPlayer.OnPreparedListener,
@@ -39,6 +43,7 @@ public class PlaybackService extends Service implements
     MediaPlayer mMediaPlayer = null;
     private int songPos;
     private List<Song> mSongs;
+    private Playlist currentPlaylist;
 
     private NotificationManager mNM;
     private LocalBroadcastManager broadcaster;
@@ -70,9 +75,10 @@ public class PlaybackService extends Service implements
         broadcaster = LocalBroadcastManager.getInstance(this);
     }
 
-    private void showNotification() {
+    public void showNotification() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                notificationIntent, 0);
 
         // Set the info for the views that show in the notification panel.
         Notification notification = new Notification.Builder(this)
@@ -82,9 +88,14 @@ public class PlaybackService extends Service implements
                 .setContentText(getCurrentSong().title)  // the song title
                 .setContentIntent(contentIntent)// The intent to send when the entry is clicked
                 .setWhen(0)
+                .setOngoing(true) // user can't close notification
                 .build();
         // Send the notification.
         mNM.notify(NOTIFICATION_ID, notification);
+    }
+
+    public void hideNotification() {
+        mNM.cancel(NOTIFICATION_ID);
     }
 
     public void initMusicPlayer() {
@@ -99,8 +110,12 @@ public class PlaybackService extends Service implements
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        setLatestSongAndPlaylist();
+
         // display song info at first run
         sendInfoUpdate();
+
+        showNotification();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -142,8 +157,14 @@ public class PlaybackService extends Service implements
         return false;
     }
 
-    public void setSongs(List<Song> songs) {
-        this.mSongs = songs;
+    public void setPlaylist(Playlist playlist) {
+        currentPlaylist = playlist; // save current playlist
+        // load songs of playlist
+        // TODO can be rewritten to get next/prev song directly by ID from playlist
+        mSongs = MusicUtil.getInstance().getSongsByID(this, currentPlaylist.songsId);
+        // save current playlist as latest in preferences
+        PrefUtil.setCurrentPlaylistName(this, currentPlaylist.name);
+        // set current song position to begin of playlist
         songPos = 0;
     }
 
@@ -153,12 +174,9 @@ public class PlaybackService extends Service implements
 
     public void pauseSong() {
         mMediaPlayer.pause();
-        mNM.cancel(NOTIFICATION_ID);
-        stopForeground(true);
     }
 
     public void playSong() {
-        showNotification();
         mMediaPlayer.reset();
         //get song
         Song playSong = mSongs.get(songPos);
@@ -179,6 +197,11 @@ public class PlaybackService extends Service implements
         Log.i(TAG, String.format("Play %d from %d : %s", songPos, mSongs.size() - 1, playSong));
 
         mMediaPlayer.prepareAsync();
+
+        // save current song ID to preferences to continue after app will be open next time
+        PrefUtil.setCurrentSongId(this, playSong.id);
+
+        showNotification();
     }
 
     public void continueSong() {
@@ -212,6 +235,7 @@ public class PlaybackService extends Service implements
     }
 
     public boolean isPlaying() {
+        Log.w(TAG, "Media player: " + mMediaPlayer);
         return mMediaPlayer.isPlaying();
     }
 
@@ -251,7 +275,7 @@ public class PlaybackService extends Service implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mNM.cancel(NOTIFICATION_ID);
+        hideNotification();
         stopForeground(true);
         if (mMediaPlayer != null) mMediaPlayer.release();
         Log.i(TAG, "Service destroyed");
@@ -261,17 +285,39 @@ public class PlaybackService extends Service implements
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                while (isPlaying()) {
+                while (MainActivity.isActive && isPlaying()) {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    sendProgressUpdate();
+                    if (MainActivity.isActive) {
+                        sendProgressUpdate();
+                    }
                 }
                 return null;
             }
         }.execute();
+    }
+
+    private void setLatestSongAndPlaylist() {
+        // set last opened playlist or default one
+        Playlist playlist;
+        String currentPlaylist = PrefUtil.getCurrentPlaylistName(this);
+        if (currentPlaylist == null || currentPlaylist.equals(getResources().getString(R.string.all_songs_playlist_name))) {
+            playlist = MusicUtil.getInstance().getAllSongsPlaylist(this);
+        } else {
+            playlist = DatabaseHelper.getInstance(this).findPlaylistByName(currentPlaylist);
+        }
+        setPlaylist(playlist);
+
+        // set last played song
+        long currentSongId = PrefUtil.getCurrentSongId(this);
+        if (currentSongId == -1) {
+            setSongIndex(0);
+        } else {
+            setSongIndex(MusicUtil.getInstance().getSongPositionInPlaylistById(playlist, currentSongId));
+        }
     }
 
     public class PlaybackBinder extends Binder {

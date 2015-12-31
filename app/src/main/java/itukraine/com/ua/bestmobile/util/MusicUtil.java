@@ -14,6 +14,7 @@ import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.dao.Playlist;
 import itukraine.com.ua.bestmobile.dao.Song;
 
@@ -184,6 +185,16 @@ public class MusicUtil {
 
     public int getSongPositionInPlaylistById(Playlist playlist, Long songId) {
         return playlist.songsId.indexOf(songId);
+    }
+
+    public Playlist getAllSongsPlaylist(Context context) {
+        List<Song> allSongs = MusicUtil.getInstance().getAllSongs(context);
+        Playlist playlist = new Playlist();
+        playlist.name = context.getResources().getString(R.string.all_songs_playlist_name);
+        for (Song song : allSongs) {
+            playlist.songsId.add(song.id);
+        }
+        return playlist;
     }
 
 }

@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static boolean isActive = false;
     private Toolbar mToolbar;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
@@ -62,9 +63,6 @@ public class MainActivity extends AppCompatActivity
             //get service
             mPlaybackService = binder.getService();
             mMusicBound = true;
-
-            // set all songs as default playlist
-            mPlaybackService.setSongs(MusicUtil.getInstance().getAllSongs(MainActivity.this));
         }
 
         @Override
@@ -231,6 +229,8 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            moveTaskToBack(true);
         } else {
             super.onBackPressed();
         }
@@ -265,22 +265,25 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Set picture to navigation drawer. It will be displayed as album picture.
-     *
-     * @param albumArt set image to header. If 'null' passed default will be set.
-     */
-    private void setNavigationDrawerHeader(Drawable albumArt) {
-        if (albumArt == null) {
-            albumArt = getResources().getDrawable(R.drawable.default_song_picture);
-        }
-        albumArt.setColorFilter(Color.argb(150, 155, 155, 155), PorterDuff.Mode.SRC_ATOP);
-        mNavHeaderView.setBackground(albumArt);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isActive = false;
+        Log.i(TAG, "Activity minimised");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isActive = true;
+        Log.i(TAG, "Activity restored");
     }
 
     @Override
     protected void onDestroy() {
+        unbindService(playbackConnection);
         stopService(mPlayIntent);
+        Log.i(TAG, "Activity destroyed");
         mPlaybackService = null;
         super.onDestroy();
     }
