@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
-import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.fragment.FeedbackFragment;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.

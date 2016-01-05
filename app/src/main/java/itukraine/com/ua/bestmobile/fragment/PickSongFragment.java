@@ -22,9 +22,9 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PickSongAdapter;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
-import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
@@ -114,9 +114,9 @@ public class PickSongFragment extends Fragment {
                 newPlaylist.songsId.addAll(mAdapter.selectedSongs);
                 newPlaylist.totalTime = TimeUtil.getInstance().calculateTotalTimeOfPlaylist(MusicUtil.getInstance().getSongsByID(mContext, newPlaylist.songsId));
                 if (isNewPlaylist) {
-                    DatabaseHelper.getInstance(mContext).addPlaylist(newPlaylist);
+                    DatabaseManager.getInstance(mContext).addPlaylist(newPlaylist);
                 } else {
-                    DatabaseHelper.getInstance(mContext).updatePlaylist(newPlaylist);
+                    DatabaseManager.getInstance(mContext).updatePlaylist(newPlaylist);
                 }
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new AllPlaylistsFragment()).commit();

@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 
 public class MusicUtil {
 

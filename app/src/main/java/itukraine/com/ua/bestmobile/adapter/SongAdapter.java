@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.dao.Song;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {

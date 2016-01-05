@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
-import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
@@ -33,7 +33,7 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
         this.visibleSongs = allSongs;
         this.mContext = context;
         if (!isNewPlaylist) {
-            Playlist playlist = DatabaseHelper.getInstance(mContext).findPlaylistByName(playlistName);
+            Playlist playlist = DatabaseManager.getInstance(mContext).findPlaylistByName(playlistName);
             selectedSongs = playlist.songsId;
         }
     }

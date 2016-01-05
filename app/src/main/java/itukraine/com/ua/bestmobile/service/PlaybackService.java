@@ -22,9 +22,9 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
-import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.PrefUtil;
 
@@ -307,7 +307,7 @@ public class PlaybackService extends Service implements
         if (currentPlaylist == null || currentPlaylist.equals(getResources().getString(R.string.all_songs_playlist_name))) {
             playlist = MusicUtil.getInstance().getAllSongsPlaylist(this);
         } else {
-            playlist = DatabaseHelper.getInstance(this).findPlaylistByName(currentPlaylist);
+            playlist = DatabaseManager.getInstance(this).findPlaylistByName(currentPlaylist);
         }
         setPlaylist(playlist);
 

@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.dao;
+package itukraine.com.ua.bestmobile.entity;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.dao.Playlist;
+import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;

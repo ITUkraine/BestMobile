@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.dao;
+package itukraine.com.ua.bestmobile.entity;
 
 public class Song {
 

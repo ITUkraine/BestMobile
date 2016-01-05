@@ -27,8 +27,8 @@ import java.util.List;
 import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.PlaylistAdapter;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
@@ -122,7 +122,7 @@ public class AllPlaylistsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        playlists = DatabaseHelper.getInstance(mContext).getPlaylists();
+        playlists = DatabaseManager.getInstance(mContext).getPlaylists();
         playlists.add(new Playlist(getResources().getString(R.string.all_songs_playlist_name)));
 
         Collections.sort(playlists, alphabeticalPlaylistComparator);
@@ -150,7 +150,7 @@ public class AllPlaylistsFragment extends Fragment {
                 .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
-                DatabaseHelper.getInstance(mContext).deletePlaylistByName(playlists.get(position).name);
+                DatabaseManager.getInstance(mContext).deletePlaylistByName(playlists.get(position).name);
                 playlists.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
@@ -188,13 +188,13 @@ public class AllPlaylistsFragment extends Fragment {
                             return;
                         }
                         if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
-                                || DatabaseHelper.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
+                                || DatabaseManager.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
                             Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
                             return;
                         }
                         if (!isNewPlaylist) {
                             String oldPlaylistName = playlists.get(position).name;
-                            DatabaseHelper.getInstance(mContext).renamePlaylist(oldPlaylistName, newPlaylistName);
+                            DatabaseManager.getInstance(mContext).renamePlaylist(oldPlaylistName, newPlaylistName);
                             playlists.get(position).name = newPlaylistName;
                             mAdapter.notifyItemChanged(position);
                             mAlertDialog.cancel();
@@ -244,7 +244,7 @@ public class AllPlaylistsFragment extends Fragment {
                                         MusicUtil.getInstance().getAllSongsPlaylist(mContext));
                             } else {
                                 activity.getPlaybackService().setPlaylist(
-                                        DatabaseHelper.getInstance(mContext)
+                                        DatabaseManager.getInstance(mContext)
                                                 .findPlaylistByName(playlists.get(position).name));
                             }
                             activity.getPlaybackService().playSong();

@@ -21,9 +21,9 @@ import java.util.List;
 import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.adapter.SongAdapter;
-import itukraine.com.ua.bestmobile.dao.Playlist;
-import itukraine.com.ua.bestmobile.dao.Song;
-import itukraine.com.ua.bestmobile.data.DatabaseHelper;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
@@ -139,12 +139,12 @@ public class SongListFragment extends Fragment {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
                 if (isLastSong) {
-                    DatabaseHelper.getInstance(mContext).deletePlaylistByName(currentPlaylist.name);
+                    DatabaseManager.getInstance(mContext).deletePlaylistByName(currentPlaylist.name);
                     getActivity().onBackPressed();
                 } else {
                     currentPlaylist.songsId.remove(songList.get(position).id);
                     currentPlaylist.totalTime -= MusicUtil.getInstance().getSongByID(mContext, songList.get(position).id).duration;
-                    DatabaseHelper.getInstance(mContext).updatePlaylist(currentPlaylist);
+                    DatabaseManager.getInstance(mContext).updatePlaylist(currentPlaylist);
                     songList.remove(position);
                     //Performance with notifyItemChanged() will be better,
                     // but exist issue https://code.google.com/p/android/issues/detail?id=77846
