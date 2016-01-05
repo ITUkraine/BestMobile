@@ -25,8 +25,6 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
-import itukraine.com.ua.bestmobile.util.MusicUtil;
-import itukraine.com.ua.bestmobile.util.PrefUtil;
 
 public class PlaybackService extends Service implements
         MediaPlayer.OnPreparedListener,

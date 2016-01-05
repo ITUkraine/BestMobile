@@ -17,7 +17,6 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
-import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
 

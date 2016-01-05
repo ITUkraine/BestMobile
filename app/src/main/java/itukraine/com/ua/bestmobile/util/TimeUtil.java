@@ -34,11 +34,4 @@ public class TimeUtil {
         return result;
     }
 
-    public int calculateTotalTimeOfPlaylist(List<Song> songs) {
-        int totalTime = 0;
-        for (Song song : songs) {
-            totalTime += song.duration;
-        }
-        return totalTime;
-    }
 }

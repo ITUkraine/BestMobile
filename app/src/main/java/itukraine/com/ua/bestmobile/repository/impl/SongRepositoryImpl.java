@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.util;
+package itukraine.com.ua.bestmobile.repository.impl;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -14,15 +15,16 @@ import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
 
-public class MusicUtil {
+/**
+ * Created by User on 05.01.2016.
+ */
+public class SongRepositoryImpl implements SongRepository {
 
-    private static final String TAG = MusicUtil.class.getSimpleName();
-    private static MusicUtil instance;
-
+    private static final String TAG = SongRepositoryImpl.class.getSimpleName();
     private final String[] PROJECTIONS = {
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
@@ -33,24 +35,14 @@ public class MusicUtil {
             MediaStore.Audio.Media.ALBUM_ID
     };
     private final Uri MEDIA_CONTENT_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+    private Context context;
 
-    private MusicUtil() {
+    public SongRepositoryImpl(Context context) {
+        this.context = context;
     }
 
-    public static MusicUtil getInstance() {
-        if (instance == null) {
-            instance = new MusicUtil();
-        }
-        return instance;
-    }
-
-    /**
-     * Scan sdcard for music files.
-     *
-     * @param context
-     * @return return list of all songs which was found on device
-     */
-    public List<Song> getAllSongs(Context context) {
+    @Override
+    public List<Song> getAllSongs() {
         List<Song> allSongs = new ArrayList<>();
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
@@ -79,14 +71,8 @@ public class MusicUtil {
         return allSongs;
     }
 
-    /**
-     * Get album art by MediaStore.Audio.Media.ALBUM_ID.
-     *
-     * @param context
-     * @param album_id ALBUM_ID of art
-     * @return Bitmap related to ALBUM_ID
-     */
-    public Bitmap getAlbumart(Context context, Long album_id) {
+    @Override
+    public Bitmap getAlbumArt(Long album_id) {
         Bitmap bm = null;
         try {
             final Uri ALBUM_ART_URI = Uri.parse("content://media/external/audio/albumart");
@@ -106,14 +92,8 @@ public class MusicUtil {
         return bm;
     }
 
-    /**
-     * Get song by it's id.
-     *
-     * @param context
-     * @param id      ID of the song from MediaStore
-     * @return Instance of song
-     */
-    public Song getSongByID(Context context, Long id) {
+    @Override
+    public Song getSongByID(Long id) {
         Cursor cursor = null;
         Song song = null;
         try {
@@ -139,18 +119,12 @@ public class MusicUtil {
         return song;
     }
 
-    /**
-     * Get list of songs.
-     *
-     * @param context
-     * @param songsID List of songs IDs from MediaStore
-     * @return List of songs.
-     */
-    public List<Song> getSongsByID(Context context, List<Long> songsID) {
+    @Override
+    public List<Song> getSongsByID(List<Long> songsID) {
         List<Song> songs = new ArrayList<>();
         Song song = null;
         for (Long id : songsID) {
-            song = getSongByID(context, id);
+            song = getSongByID(id);
             if (song != null) {
                 songs.add(song);
             }
@@ -158,12 +132,18 @@ public class MusicUtil {
         return songs;
     }
 
-    /**
-     * Convert data from cursor to instance of Song.
-     *
-     * @param cursor Cursor with data to convert
-     * @return Converted instance
-     */
+    @Override
+    public Long getCurrentSongId() {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getLong("currentSongId", -1);
+    }
+
+    @Override
+    public void setCurrentSongId(Long currentSongId) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putLong("currentSongId", currentSongId).commit();
+    }
+
     private Song convertCursorToSong(Cursor cursor) {
         Song song = new Song();
         song.id = cursor.getLong(cursor
@@ -182,19 +162,4 @@ public class MusicUtil {
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
         return song;
     }
-
-    public int getSongPositionInPlaylistById(Playlist playlist, Long songId) {
-        return playlist.songsId.indexOf(songId);
-    }
-
-    public Playlist getAllSongsPlaylist(Context context) {
-        List<Song> allSongs = MusicUtil.getInstance().getAllSongs(context);
-        Playlist playlist = new Playlist();
-        playlist.name = context.getResources().getString(R.string.all_songs_playlist_name);
-        for (Song song : allSongs) {
-            playlist.songsId.add(song.id);
-        }
-        return playlist;
-    }
-
 }

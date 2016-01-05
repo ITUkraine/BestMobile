@@ -1,6 +1,8 @@
 package itukraine.com.ua.bestmobile.repository.impl;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -12,17 +14,27 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
 
 /**
  * Created by User on 05.01.2016.
  */
 public class PlaylistRepositoryImpl implements PlaylistRepository {
 
+    private Context context;
     private DatabaseManager databaseManager;
+    private SongRepository songRepository;
 
     public PlaylistRepositoryImpl(Context context) {
+        this.context = context;
         this.databaseManager = DatabaseManager.getInstance(context);
+        this.songRepository = new SongRepositoryImpl(context);
+    }
+
+    private Dao<Playlist, ?> getDao() throws SQLException {
+        return databaseManager.getDao(Playlist.class);
     }
 
     @Override
@@ -32,10 +44,6 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private Dao<Playlist, ?> getDao() throws SQLException {
-        return databaseManager.getDao(Playlist.class);
     }
 
     @Override
@@ -103,4 +111,33 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String getCurrentPlaylistName() {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("currentPlaylistName", null);
+    }
+
+    @Override
+    public void setCurrentPlaylistName(String currentPlaylistName) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString("currentPlaylistName", currentPlaylistName).commit();
+    }
+
+    @Override
+    public int calculateTotalDuration(Playlist playlist) {
+        List<Song> songs = songRepository.getSongsByID(playlist.songsId);
+        int totalTime = 0;
+        for (Song song : songs) {
+            totalTime += song.duration;
+        }
+        return totalTime;
+    }
+
+    @Override
+    public int getSongPositionInPlaylistById(Playlist playlist, Long songId) {
+        return playlist.songsId.indexOf(songId);
+    }
+
+
 }
