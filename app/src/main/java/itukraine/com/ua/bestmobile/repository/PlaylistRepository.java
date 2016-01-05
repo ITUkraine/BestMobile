@@ -1,7 +1,5 @@
 package itukraine.com.ua.bestmobile.repository;
 
-import android.content.Context;
-
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Playlist;

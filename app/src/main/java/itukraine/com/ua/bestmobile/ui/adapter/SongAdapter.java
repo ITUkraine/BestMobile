@@ -1,7 +1,6 @@
 package itukraine.com.ua.bestmobile.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,12 +54,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mSongTitle.setText(getItem(position).title);
         holder.mSongArtist.setText(getItem(position).artist);
-        Bitmap albumArt = MusicUtil.getInstance().getAlbumart(mContext, getItem(position).albumId);
+        /*Bitmap albumArt = MusicUtil.getInstance().getAlbumart(mContext, getItem(position).albumId); TODO move logic to SongFragment
         if (albumArt != null) {
             holder.mAlbumArt.setImageBitmap(albumArt);
         } else {
             holder.mAlbumArt.setImageResource(R.drawable.default_song_picture);
-        }
+        }*/
     }
 
     // Return the size of your dataset (invoked by the layout manager)

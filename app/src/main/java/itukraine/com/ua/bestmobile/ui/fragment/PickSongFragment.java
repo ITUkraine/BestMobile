@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 import itukraine.com.ua.bestmobile.ui.adapter.PickSongAdapter;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
-import itukraine.com.ua.bestmobile.util.TimeUtil;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
 /**
@@ -48,6 +52,9 @@ public class PickSongFragment extends Fragment {
 
     private Context mContext;
 
+    private PlaylistRepository playlistRepository;
+    private SongRepository songRepository;
+
     private List<Song> allSongs;
     private String playlistName;
     private Comparator<Song> alphabeticalSongComparator = new Comparator<Song>() {
@@ -62,6 +69,8 @@ public class PickSongFragment extends Fragment {
     public PickSongFragment(String playlistName, boolean isNewPlaylist) {
         this.playlistName = playlistName;
         this.isNewPlaylist = isNewPlaylist;
+        playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
+        songRepository = new SongRepositoryImpl(App.getInstance());
     }
 
     @Override
@@ -111,11 +120,11 @@ public class PickSongFragment extends Fragment {
                 Playlist newPlaylist = new Playlist(playlistName);
                 newPlaylist.songsId.clear();
                 newPlaylist.songsId.addAll(mAdapter.selectedSongs);
-                newPlaylist.totalTime = TimeUtil.getInstance().calculateTotalTimeOfPlaylist(MusicUtil.getInstance().getSongsByID(mContext, newPlaylist.songsId));
+                newPlaylist.totalTime = playlistRepository.calculateTotalDuration(newPlaylist);
                 if (isNewPlaylist) {
-                    DatabaseManager.getInstance(mContext).addPlaylist(newPlaylist);
+                    playlistRepository.addPlaylist(newPlaylist);
                 } else {
-                    DatabaseManager.getInstance(mContext).updatePlaylist(newPlaylist);
+                    playlistRepository.updatePlaylist(newPlaylist);
                 }
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new AllPlaylistsFragment()).commit();
@@ -130,11 +139,13 @@ public class PickSongFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        allSongs = MusicUtil.getInstance().getAllSongs(mContext);
+        allSongs = songRepository.getAllSongs();
 
         Collections.sort(allSongs, alphabeticalSongComparator);
 
-        mAdapter = new PickSongAdapter(mContext, allSongs, playlistName, isNewPlaylist);
+        Playlist playlist = playlistRepository.findPlaylistByName(playlistName);
+
+        mAdapter = new PickSongAdapter(mContext, allSongs, playlist, isNewPlaylist);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));

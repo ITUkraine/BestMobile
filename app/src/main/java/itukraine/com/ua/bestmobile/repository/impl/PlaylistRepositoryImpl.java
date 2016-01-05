@@ -1,7 +1,6 @@
 package itukraine.com.ua.bestmobile.repository.impl;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.j256.ormlite.dao.Dao;
@@ -24,17 +23,15 @@ import itukraine.com.ua.bestmobile.repository.SongRepository;
 public class PlaylistRepositoryImpl implements PlaylistRepository {
 
     private Context context;
-    private DatabaseManager databaseManager;
     private SongRepository songRepository;
 
     public PlaylistRepositoryImpl(Context context) {
         this.context = context;
-        this.databaseManager = DatabaseManager.getInstance(context);
         this.songRepository = new SongRepositoryImpl(context);
     }
 
     private Dao<Playlist, ?> getDao() throws SQLException {
-        return databaseManager.getDao(Playlist.class);
+        return DatabaseManager.getInstance(context).getDao(Playlist.class);
     }
 
     @Override

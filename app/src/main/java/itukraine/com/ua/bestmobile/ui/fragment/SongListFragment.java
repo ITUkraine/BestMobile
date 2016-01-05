@@ -18,10 +18,14 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.ui.adapter.SongAdapter;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -45,11 +49,16 @@ public class SongListFragment extends Fragment {
     private List<Song> songList; // TODO don't really know if it's needed
     private Playlist currentPlaylist;
 
+    private PlaylistRepository playlistRepository;
+    private SongRepository songRepository;
+
     public SongListFragment() {
     }
 
     public SongListFragment(Playlist currentPlaylist) {
         this.currentPlaylist = currentPlaylist;
+        playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
+        songRepository = new SongRepositoryImpl(App.getInstance());
     }
 
     @Override
@@ -107,9 +116,9 @@ public class SongListFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         if (currentPlaylist.name.equals(getResources().getString(R.string.all_songs_playlist_name))) {
-            songList = MusicUtil.getInstance().getAllSongs(mContext);
+            songList = songRepository.getAllSongs();
         } else {
-            songList = MusicUtil.getInstance().getSongsByID(mContext, currentPlaylist.songsId);
+            songList = songRepository.getSongsByID(currentPlaylist.songsId);
         }
 
         mAdapter = new SongAdapter(mContext, songList);
@@ -138,12 +147,12 @@ public class SongListFragment extends Fragment {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
                 if (isLastSong) {
-                    DatabaseManager.getInstance(mContext).deletePlaylistByName(currentPlaylist.name);
+                    playlistRepository.deletePlaylistByName(currentPlaylist.name);
                     getActivity().onBackPressed();
                 } else {
                     currentPlaylist.songsId.remove(songList.get(position).id);
-                    currentPlaylist.totalTime -= MusicUtil.getInstance().getSongByID(mContext, songList.get(position).id).duration;
-                    DatabaseManager.getInstance(mContext).updatePlaylist(currentPlaylist);
+                    currentPlaylist.totalTime -= songRepository.getSongByID(songList.get(position).id).duration;
+                    playlistRepository.updatePlaylist(currentPlaylist);
                     songList.remove(position);
                     //Performance with notifyItemChanged() will be better,
                     // but exist issue https://code.google.com/p/android/issues/detail?id=77846

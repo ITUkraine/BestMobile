@@ -25,8 +25,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.ui.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -49,6 +50,8 @@ public class AllPlaylistsFragment extends Fragment {
 
     private Context mContext;
 
+    private PlaylistRepository playlistRepository;
+
     private MainActivity activity;
 
     private List<Playlist> playlists;
@@ -62,6 +65,10 @@ public class AllPlaylistsFragment extends Fragment {
             return p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
         }
     };
+
+    public AllPlaylistsFragment() {
+        playlistRepository = new PlaylistRepositoryImpl(getActivity());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +128,7 @@ public class AllPlaylistsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        playlists = DatabaseManager.getInstance(mContext).getPlaylists();
+        playlists = playlistRepository.getPlaylists();
         playlists.add(new Playlist(getResources().getString(R.string.all_songs_playlist_name)));
 
         Collections.sort(playlists, alphabeticalPlaylistComparator);
@@ -149,7 +156,7 @@ public class AllPlaylistsFragment extends Fragment {
                 .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
-                DatabaseManager.getInstance(mContext).deletePlaylistByName(playlists.get(position).name);
+                playlistRepository.deletePlaylistByName(playlists.get(position).name);
                 playlists.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
@@ -187,13 +194,13 @@ public class AllPlaylistsFragment extends Fragment {
                             return;
                         }
                         if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
-                                || DatabaseManager.getInstance(mContext).findPlaylistByName(newPlaylistName) != null) {
+                                || playlistRepository.findPlaylistByName(newPlaylistName) != null) {
                             Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
                             return;
                         }
                         if (!isNewPlaylist) {
                             String oldPlaylistName = playlists.get(position).name;
-                            DatabaseManager.getInstance(mContext).renamePlaylist(oldPlaylistName, newPlaylistName);
+                            playlistRepository.renamePlaylist(oldPlaylistName, newPlaylistName);
                             playlists.get(position).name = newPlaylistName;
                             mAdapter.notifyItemChanged(position);
                             mAlertDialog.cancel();
@@ -239,12 +246,10 @@ public class AllPlaylistsFragment extends Fragment {
                         case 0:
                             // Play playlist
                             if (isDefaultPlaylist) {
-                                activity.getPlaybackService().setPlaylist(
-                                        MusicUtil.getInstance().getAllSongsPlaylist(mContext));
+                                activity.getPlaybackService().setPlaylist(new Playlist("All songs"));// TODO
                             } else {
                                 activity.getPlaybackService().setPlaylist(
-                                        DatabaseManager.getInstance(mContext)
-                                                .findPlaylistByName(playlists.get(position).name));
+                                        playlistRepository.findPlaylistByName(playlists.get(position).name));
                             }
                             activity.getPlaybackService().playSong();
                             break;

@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.adapter;
+package itukraine.com.ua.bestmobile.ui.adapter;
 
 
 import android.content.Context;
@@ -14,7 +14,6 @@ import java.util.List;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
-import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
@@ -56,10 +55,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         holder.mPlaylistName.setText(getItem(position).name);
 
         if (getItem(position).name.equals(context.getResources().getString(R.string.all_songs_playlist_name))) {
-            holder.mPlaylistDuration.setText(
-                    TimeUtil.getInstance().formatTime(
-                            TimeUtil.getInstance().calculateTotalTimeOfPlaylist(
-                                    MusicUtil.getInstance().getAllSongs(context))));
+            holder.mPlaylistDuration.setText("TODO");
         } else {
             holder.mPlaylistDuration.setText(TimeUtil.getInstance().formatTime(getItem(position).totalTime));
         }

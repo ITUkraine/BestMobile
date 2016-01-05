@@ -15,7 +15,6 @@ import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.repository.SongRepository;
 

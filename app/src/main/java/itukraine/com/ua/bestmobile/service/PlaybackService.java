@@ -20,9 +20,12 @@ import android.util.Log;
 
 import java.util.List;
 
-import itukraine.com.ua.bestmobile.MainActivity;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
+import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 
@@ -45,6 +48,9 @@ public class PlaybackService extends Service implements
 
     private NotificationManager mNM;
     private LocalBroadcastManager broadcaster;
+
+    private PlaylistRepository playlistRepository;
+    private SongRepository songRepository;
 
     @Nullable
     @Override
@@ -71,6 +77,9 @@ public class PlaybackService extends Service implements
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         broadcaster = LocalBroadcastManager.getInstance(this);
+
+        playlistRepository = new PlaylistRepositoryImpl(this);
+        songRepository = new SongRepositoryImpl(this);
     }
 
     public void showNotification() {
@@ -159,9 +168,9 @@ public class PlaybackService extends Service implements
         currentPlaylist = playlist; // save current playlist
         // load songs of playlist
         // TODO can be rewritten to get next/prev song directly by ID from playlist
-        mSongs = MusicUtil.getInstance().getSongsByID(this, currentPlaylist.songsId);
+        mSongs = songRepository.getSongsByID(currentPlaylist.songsId);
         // save current playlist as latest in preferences
-        PrefUtil.setCurrentPlaylistName(this, currentPlaylist.name);
+        playlistRepository.setCurrentPlaylistName(currentPlaylist.name);
         // set current song position to begin of playlist
         songPos = 0;
     }
@@ -197,7 +206,7 @@ public class PlaybackService extends Service implements
         mMediaPlayer.prepareAsync();
 
         // save current song ID to preferences to continue after app will be open next time
-        PrefUtil.setCurrentSongId(this, playSong.id);
+        songRepository.setCurrentSongId(playSong.id);
 
         showNotification();
     }
@@ -301,20 +310,22 @@ public class PlaybackService extends Service implements
     private void setLatestSongAndPlaylist() {
         // set last opened playlist or default one
         Playlist playlist;
-        String currentPlaylist = PrefUtil.getCurrentPlaylistName(this);
+        String currentPlaylist = playlistRepository.getCurrentPlaylistName();
         if (currentPlaylist == null || currentPlaylist.equals(getResources().getString(R.string.all_songs_playlist_name))) {
-            playlist = MusicUtil.getInstance().getAllSongsPlaylist(this);
+            playlist = new Playlist("All songs");//TODO
+            List<Song> songs = songRepository.getAllSongs();
+            playlist.songsId.add(songs.get(0).id);
         } else {
-            playlist = DatabaseManager.getInstance(this).findPlaylistByName(currentPlaylist);
+            playlist = playlistRepository.findPlaylistByName(currentPlaylist);
         }
         setPlaylist(playlist);
 
         // set last played song
-        long currentSongId = PrefUtil.getCurrentSongId(this);
+        long currentSongId = songRepository.getCurrentSongId();
         if (currentSongId == -1) {
             setSongIndex(0);
         } else {
-            setSongIndex(MusicUtil.getInstance().getSongPositionInPlaylistById(playlist, currentSongId));
+            setSongIndex(playlistRepository.getSongPositionInPlaylistById(playlist, currentSongId));
         }
     }
 

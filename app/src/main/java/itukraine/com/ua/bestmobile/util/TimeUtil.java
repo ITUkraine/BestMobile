@@ -1,9 +1,6 @@
 package itukraine.com.ua.bestmobile.util;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import itukraine.com.ua.bestmobile.entity.Song;
 
 public class TimeUtil {
     private static TimeUtil instance;

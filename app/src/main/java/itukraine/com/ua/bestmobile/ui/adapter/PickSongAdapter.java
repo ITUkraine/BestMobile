@@ -1,7 +1,6 @@
 package itukraine.com.ua.bestmobile.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 
@@ -27,12 +25,11 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
     private Context mContext;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public PickSongAdapter(Context context, List<Song> allSongs, String playlistName, boolean isNewPlaylist) {
+    public PickSongAdapter(Context context, List<Song> allSongs, Playlist playlist, boolean isNewPlaylist) {
         this.allSongs = allSongs;
         this.visibleSongs = allSongs;
         this.mContext = context;
         if (!isNewPlaylist) {
-            Playlist playlist = DatabaseManager.getInstance(mContext).findPlaylistByName(playlistName);
             selectedSongs = playlist.songsId;
         }
     }
@@ -63,12 +60,12 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mSongTitle.setText(getItem(position).title);
         holder.mSongArtist.setText(getItem(position).artist);
-        Bitmap albumArt = MusicUtil.getInstance().getAlbumart(mContext, getItem(position).albumId);
+        /*Bitmap albumArt = MusicUtil.getInstance().getAlbumart(mContext, getItem(position).albumId); TODO move logic to PickSongFragment
         if (albumArt != null) {
             holder.mAlbumArt.setImageBitmap(albumArt);
         } else {
             holder.mAlbumArt.setImageResource(R.drawable.default_song_picture);
-        }
+        }*/
 
         holder.mWholeItem.setSelected(selectedSongs.contains(getItem(position).id));
     }

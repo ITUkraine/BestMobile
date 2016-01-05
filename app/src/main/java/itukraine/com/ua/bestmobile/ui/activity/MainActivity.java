@@ -30,9 +30,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.presenter.MainPresenterImpl;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.ui.fragment.FeedbackFragment;
@@ -57,6 +62,9 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver receiverProgressUpdate;
     private BroadcastReceiver receiverInfoUpdate;
     private MainPresenter mainPresenter;
+
+    private PlaylistRepository playlistRepository;
+    private SongRepository songRepository;
     //connection to the service
     private ServiceConnection playbackConnection = new ServiceConnection() {
 
@@ -97,6 +105,11 @@ public class MainActivity extends AppCompatActivity
         initNavigationHeaderControls();
 
         mainPresenter = new MainPresenterImpl(this);
+
+        DatabaseManager.getInstance(this).getWritableDatabase();
+
+        playlistRepository = new PlaylistRepositoryImpl(this);
+        songRepository = new SongRepositoryImpl(this);
     }
 
     private void initNavigationDrawer() {
@@ -195,7 +208,7 @@ public class MainActivity extends AppCompatActivity
     public void updateNavigationHeaderSongInfo() {
         Song current = mPlaybackService.getCurrentSong();
         Drawable art;
-        Bitmap bitmap = MusicUtil.getInstance().getAlbumart(this, current.albumId);
+        Bitmap bitmap = songRepository.getAlbumArt(current.albumId);
         if (bitmap == null) {
             art = getResources().getDrawable(R.drawable.default_song_picture);
         } else {

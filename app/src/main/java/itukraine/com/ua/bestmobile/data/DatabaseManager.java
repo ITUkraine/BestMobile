@@ -10,6 +10,8 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Playlist;
 
@@ -25,7 +27,7 @@ public class DatabaseManager extends OrmLiteSqliteOpenHelper {
 
     private static DatabaseManager instance;
 
-    private DatabaseManager(Context context) {
+    public DatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -34,6 +36,10 @@ public class DatabaseManager extends OrmLiteSqliteOpenHelper {
             instance = new DatabaseManager(paramContext);
         }
         return instance;
+    }
+
+    public static void init(Context context) {
+        getInstance(context).getWritableDatabase();
     }
 
     @Override
@@ -47,7 +53,6 @@ public class DatabaseManager extends OrmLiteSqliteOpenHelper {
         }
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase paramSQLiteDatabase, ConnectionSource paramConnectionSource, int paramInt1,
                           int paramInt2) {
@@ -59,13 +64,7 @@ public class DatabaseManager extends OrmLiteSqliteOpenHelper {
                 Log.e(TAG, "Exception when try to drop tables on onUpgrade()");
             }
         }
-        for (int i = 0; i < daoList.length; i++) {
-            try {
-                TableUtils.createTable(paramConnectionSource, daoList[i]);
-            } catch (SQLException e) {
-                Log.e(TAG, "Exception when try to create tables on onUpgrade()");
-            }
-        }
+        onCreate(paramSQLiteDatabase, paramConnectionSource);
     }
 
     @Override
@@ -73,4 +72,12 @@ public class DatabaseManager extends OrmLiteSqliteOpenHelper {
         super.close();
     }
 
+    public List<Playlist> getPlaylists() {
+        try {
+            return getDao(Playlist.class).queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 }

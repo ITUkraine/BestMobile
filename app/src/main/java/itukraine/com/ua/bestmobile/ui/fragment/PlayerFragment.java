@@ -16,6 +16,10 @@ import android.widget.TextView;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
+import itukraine.com.ua.bestmobile.repository.SongRepository;
+import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
@@ -26,19 +30,23 @@ import itukraine.com.ua.bestmobile.util.TimeUtil;
 public class PlayerFragment extends Fragment {
 
     private static final String TAG = PlayerFragment.class.getCanonicalName();
-    ImageView imageAlbum;
-    TextView textArtist;
-    TextView textSong;
-    SeekBar songProgressbar;
-    Button buttonPlay;
-    Button buttonNextSong;
-    Button buttonPrevSong;
-    TextView textCurrentTime;
-    TextView textTotalDuration;
+    private ImageView imageAlbum;
+    private TextView textArtist;
+    private TextView textSong;
+    private SeekBar songProgressbar;
+    private Button buttonPlay;
+    private Button buttonNextSong;
+    private Button buttonPrevSong;
+    private TextView textCurrentTime;
+    private TextView textTotalDuration;
     private MainActivity activity;
 
+    private PlaylistRepository playlistRepository;
+    private SongRepository songRepository;
+
     public PlayerFragment() {
-        // Required empty public constructor
+        playlistRepository = new PlaylistRepositoryImpl(activity);
+        songRepository = new SongRepositoryImpl(activity);
     }
 
     @Override
@@ -157,7 +165,7 @@ public class PlayerFragment extends Fragment {
 
         songProgressbar.setMax(currentSong.duration);
 
-        Bitmap bitmap = MusicUtil.getInstance().getAlbumart(getActivity(), currentSong.albumId);
+        Bitmap bitmap = songRepository.getAlbumArt(currentSong.albumId);
         if (bitmap == null) {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture);
         }
