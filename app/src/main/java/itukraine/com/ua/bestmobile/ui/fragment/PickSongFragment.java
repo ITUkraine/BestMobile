@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.fragment;
+package itukraine.com.ua.bestmobile.ui.fragment;
 
 
 import android.content.Context;
@@ -21,10 +21,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.adapter.PickSongAdapter;
 import itukraine.com.ua.bestmobile.data.DatabaseManager;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.ui.adapter.PickSongAdapter;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;

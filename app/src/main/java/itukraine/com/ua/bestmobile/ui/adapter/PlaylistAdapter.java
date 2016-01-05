@@ -13,7 +13,8 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
-import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
+import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
+import itukraine.com.ua.bestmobile.util.MusicUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {

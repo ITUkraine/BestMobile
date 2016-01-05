@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.adapter;
+package itukraine.com.ua.bestmobile.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,33 +7,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.data.DatabaseManager;
+import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
+public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
 
-    private static final String TAG = SongAdapter.class.getCanonicalName();
-
+    private static final String TAG = PickSongAdapter.class.getCanonicalName();
+    public List<Long> selectedSongs = new ArrayList<>();
     public List<Song> visibleSongs;
-    public List<Song> allSongs;
+    private List<Song> allSongs;
     private Context mContext;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SongAdapter(Context context, List<Song> songs) {
-        this.allSongs = songs;
-        this.visibleSongs = songs;
-        mContext = context;
+    public PickSongAdapter(Context context, List<Song> allSongs, String playlistName, boolean isNewPlaylist) {
+        this.allSongs = allSongs;
+        this.visibleSongs = allSongs;
+        this.mContext = context;
+        if (!isNewPlaylist) {
+            Playlist playlist = DatabaseManager.getInstance(mContext).findPlaylistByName(playlistName);
+            selectedSongs = playlist.songsId;
+        }
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public SongAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                     int viewType) {
+    public PickSongAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                         int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_song, parent, false);
@@ -42,6 +49,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         vh.mSongTitle = (TextView) v.findViewById(R.id.song_title);
         vh.mSongArtist = (TextView) v.findViewById(R.id.song_artist);
         vh.mAlbumArt = (ImageView) v.findViewById(R.id.album_art);
+        vh.mWholeItem = (LinearLayout) v.findViewById(R.id.whole_item);
 
         return vh;
     }
@@ -61,6 +69,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         } else {
             holder.mAlbumArt.setImageResource(R.drawable.default_song_picture);
         }
+
+        holder.mWholeItem.setSelected(selectedSongs.contains(getItem(position).id));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -94,9 +104,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         public TextView mSongTitle;
         public TextView mSongArtist;
         public ImageView mAlbumArt;
+        public LinearLayout mWholeItem;
 
         public ViewHolder(View v) {
             super(v);
+            v.setClickable(true);
         }
 
     }

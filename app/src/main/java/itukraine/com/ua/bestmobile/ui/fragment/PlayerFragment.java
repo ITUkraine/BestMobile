@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.fragment;
+package itukraine.com.ua.bestmobile.ui.fragment;
 
 
 import android.graphics.Bitmap;
@@ -14,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import itukraine.com.ua.bestmobile.MainActivity;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 

@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.fragment;
+package itukraine.com.ua.bestmobile.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;

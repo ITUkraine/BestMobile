@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile;
+package itukraine.com.ua.bestmobile.ui.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -29,16 +29,18 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
+import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Song;
-import itukraine.com.ua.bestmobile.fragment.AllPlaylistsFragment;
-import itukraine.com.ua.bestmobile.fragment.FeedbackFragment;
-import itukraine.com.ua.bestmobile.fragment.PlayerFragment;
+import itukraine.com.ua.bestmobile.presenter.MainPresenter;
+import itukraine.com.ua.bestmobile.presenter.MainPresenterImpl;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
+import itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment;
+import itukraine.com.ua.bestmobile.ui.fragment.FeedbackFragment;
+import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
-import itukraine.com.ua.bestmobile.util.MusicUtil;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MainView {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static boolean isActive = false;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     private boolean mMusicBound = false;
     private BroadcastReceiver receiverProgressUpdate;
     private BroadcastReceiver receiverInfoUpdate;
+    private MainPresenter mainPresenter;
     //connection to the service
     private ServiceConnection playbackConnection = new ServiceConnection() {
 
@@ -83,11 +86,20 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         openFragment(new PlayerFragment());
 
+        initNavigationDrawer();
+
+        initNavigationHeaderControls();
+
+        mainPresenter = new MainPresenterImpl(this);
+    }
+
+    private void initNavigationDrawer() {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         CustomNavDrawerListener drawerListener = new CustomNavDrawerListener(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -105,7 +117,9 @@ public class MainActivity extends AppCompatActivity
                 onBackPressed();
             }
         });
+    }
 
+    private void initNavigationHeaderControls() {
         mNextSongBtnNavHeader = (ImageButton) mNavigationView.getHeaderView(0).findViewById(R.id.header_btn_next);
         mPrevSongBtnNavHeader = (ImageButton) mNavigationView.getHeaderView(0).findViewById(R.id.header_btn_prev);
         mPlaySongBtnNavHeader = (ImageButton) mNavigationView.getHeaderView(0).findViewById(R.id.header_btn_play);
@@ -128,7 +142,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 mPlaybackService.smartPlay();
-                updateNavHeaderPlayButton();
+                updateNavigationHeaderControls();
             }
         });
 
@@ -136,7 +150,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent) {
                 int pos = intent.getIntExtra(PlaybackService.EXTRA_PROGRESS, 0);
-                sendDataToFragment(pos);
+                sendCurrentSongDurationToFragment(pos);
             }
         };
 
@@ -145,7 +159,7 @@ public class MainActivity extends AppCompatActivity
             public void onReceive(Context context, Intent intent) {
                 boolean infoUpdate = intent.getBooleanExtra(PlaybackService.EXTRA_INFO_CHANGED, false);
                 if (infoUpdate) {
-                    sendUpdateToFragment();
+                    sendCurrentSongUpdateRequestToFragment();
                     Log.i(TAG, "Service: " + mPlaybackService);
                     updateNavigationHeaderSongInfo();
                     updateNavHeaderPlayButton();
@@ -162,21 +176,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void sendDataToFragment(int pos) {
+    @Override
+    public void sendCurrentSongDurationToFragment(int pos) {
         Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
         if (currentFragment instanceof PlayerFragment) {
             ((PlayerFragment) currentFragment).updateSongProgress(pos);
         }
     }
 
-    private void sendUpdateToFragment() {
+    @Override
+    public void sendCurrentSongUpdateRequestToFragment() {
         Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
         if (currentFragment instanceof PlayerFragment) {
             ((PlayerFragment) currentFragment).displaySongData();
         }
     }
 
-    private void updateNavigationHeaderSongInfo() {
+    public void updateNavigationHeaderSongInfo() {
         Song current = mPlaybackService.getCurrentSong();
         Drawable art;
         Bitmap bitmap = MusicUtil.getInstance().getAlbumart(this, current.albumId);
@@ -214,11 +230,6 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
-    /**
-     * Open fragment from parameter.
-     *
-     * @param fragment Open fragment
-     */
     private void openFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.main_fragment, fragment).commit();
@@ -256,7 +267,8 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void clearBackStack() {
+    @Override
+    public void clearBackStack() {
         FragmentManager fm = getSupportFragmentManager();
         int count = fm.getBackStackEntryCount();
         for (int i = 0; i < count; ++i) {
@@ -287,6 +299,21 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    @Override
+    public void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void updateNavigationHeaderControls() {
+        if (mPlaybackService.isPlaying()) {
+            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_pause);
+        } else {
+            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_play);
+        }
+    }
+
     private class CustomNavDrawerListener extends ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
 
         public CustomNavDrawerListener(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
@@ -298,17 +325,16 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "Drawer open");
 
             // hide keyboard when drawer open
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
+            hideKeyboard(drawerView);
 
-            updateNavHeaderPlayButton();
+            updateNavigationHeaderControls();
         }
 
         @Override
         public void onDrawerClosed(View drawerView) {
             Log.i(TAG, "Drawer close");
 
-            sendUpdateToFragment();
+            sendCurrentSongUpdateRequestToFragment();
         }
 
         @Override
