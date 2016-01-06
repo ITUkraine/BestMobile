@@ -20,14 +20,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
-import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
-import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenter;
+import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.ui.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -36,9 +34,11 @@ import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllPlaylistsFragment extends Fragment {
+public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
 
     private static final String TAG = AllPlaylistsFragment.class.getCanonicalName();
+
+    private AllPlaylistPresenter allPlaylistPresenter;
 
     private RecyclerView mRecyclerView;
     private PlaylistAdapter mAdapter;
@@ -50,38 +50,37 @@ public class AllPlaylistsFragment extends Fragment {
 
     private Context mContext;
 
-    private PlaylistRepository playlistRepository;
-
     private MainActivity activity;
-
-    private List<Playlist> playlists;
-
-    private Comparator<Playlist> alphabeticalPlaylistComparator = new Comparator<Playlist>() {
-        public int compare(Playlist p1, Playlist p2) {
-            if (p1.name.equals(getResources().getString(R.string.all_songs_playlist_name)))
-                return -1;
-            if (p2.name.equals(getResources().getString(R.string.all_songs_playlist_name)))
-                return 1;
-            return p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
-        }
-    };
-
-    public AllPlaylistsFragment() {
-        playlistRepository = new PlaylistRepositoryImpl(getActivity());
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
-
 
         activity = (MainActivity) getActivity();
-
         activity.getToolbar().setTitle(R.string.playlists);
 
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
+        editSearch = (EditText) view.findViewById(R.id.editSearch);
+        addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
+        addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
+
+        initListeners();
+
+        initRecycleView(view);
+
+        allPlaylistPresenter = new AllPlaylistPresenterImpl(this);
+
+        return view;
+    }
+
+    @Override
+    public void setPlaylists(List<Playlist> playlists) {
+        mAdapter = new PlaylistAdapter(mContext, playlists);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initListeners() {
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +89,7 @@ public class AllPlaylistsFragment extends Fragment {
                 editSearch.setText("");
             }
         });
-        editSearch = (EditText) view.findViewById(R.id.editSearch);
+
         editSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -110,37 +109,22 @@ public class AllPlaylistsFragment extends Fragment {
             }
         });
 
-
-        addPlaylistButton = (FloatingActionButton) view.findViewById(R.id.add_playlist_button);
-        addPlaylistButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
         addPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 displayPlaylistTitleDialog(null, true);
             }
         });
+    }
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+    private void initRecycleView(View view) {
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
         mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        playlists = playlistRepository.getPlaylists();
-        playlists.add(new Playlist(getResources().getString(R.string.all_songs_playlist_name)));
-
-        Collections.sort(playlists, alphabeticalPlaylistComparator);
-
-        mAdapter = new PlaylistAdapter(mContext, playlists);
-        mRecyclerView.setAdapter(mAdapter);
-
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
                 new OnItemClickListener()));
-
-        return view;
     }
 
     @Override
@@ -156,8 +140,7 @@ public class AllPlaylistsFragment extends Fragment {
                 .setCancelable(false).setPositiveButton(mContext.getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
-                playlistRepository.deletePlaylistByName(playlists.get(position).name);
-                playlists.remove(position);
+                allPlaylistPresenter.deletePlaylist(position);
                 mAdapter.notifyDataSetChanged();
             }
         }).setNegativeButton(mContext.getString(R.string.btn_no), new DialogInterface.OnClickListener() {
