@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.interactor;
+package itukraine.com.ua.bestmobile.interactor.impl;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +11,7 @@ import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.repository.MediaPlayerRepository;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
 import itukraine.com.ua.bestmobile.repository.SongRepository;

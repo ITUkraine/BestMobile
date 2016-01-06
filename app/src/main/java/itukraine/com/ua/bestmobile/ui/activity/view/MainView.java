@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.ui.activity;
+package itukraine.com.ua.bestmobile.ui.activity.view;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;

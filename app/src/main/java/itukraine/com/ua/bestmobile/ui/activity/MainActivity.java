@@ -21,7 +21,8 @@ import android.widget.ImageButton;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
-import itukraine.com.ua.bestmobile.presenter.MainPresenterImpl;
+import itukraine.com.ua.bestmobile.presenter.impl.MainPresenterImpl;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.ui.fragment.FeedbackFragment;
 import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;

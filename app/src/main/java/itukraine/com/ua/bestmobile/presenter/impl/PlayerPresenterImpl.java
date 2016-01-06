@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.presenter;
+package itukraine.com.ua.bestmobile.presenter.impl;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,9 +12,10 @@ import java.io.IOException;
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
-import itukraine.com.ua.bestmobile.interactor.PlayerInteractorImpl;
+import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
+import itukraine.com.ua.bestmobile.presenter.PlayerPresenter;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
-import itukraine.com.ua.bestmobile.ui.fragment.PlayerView;
+import itukraine.com.ua.bestmobile.ui.fragment.view.PlayerView;
 
 public class PlayerPresenterImpl implements PlayerPresenter {
 

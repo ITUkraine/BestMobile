@@ -16,7 +16,7 @@ import android.util.Log;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
-import itukraine.com.ua.bestmobile.interactor.PlayerInteractorImpl;
+import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 
 public class PlaybackService extends Service {

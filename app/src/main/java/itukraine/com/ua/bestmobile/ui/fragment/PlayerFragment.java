@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.PlayerPresenter;
-import itukraine.com.ua.bestmobile.presenter.PlayerPresenterImpl;
+import itukraine.com.ua.bestmobile.presenter.impl.PlayerPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
+import itukraine.com.ua.bestmobile.ui.fragment.view.PlayerView;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 public class PlayerFragment extends Fragment implements PlayerView {
