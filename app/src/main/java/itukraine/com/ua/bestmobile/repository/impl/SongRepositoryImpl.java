@@ -143,6 +143,13 @@ public class SongRepositoryImpl implements SongRepository {
                 .putLong("currentSongId", currentSongId).commit();
     }
 
+    @Override
+    public Uri getSongUri(Long songId) {
+        return ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                songId);
+    }
+
     private Song convertCursorToSong(Cursor cursor) {
         Song song = new Song();
         song.id = cursor.getLong(cursor

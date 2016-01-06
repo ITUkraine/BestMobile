@@ -1,14 +1,12 @@
 package itukraine.com.ua.bestmobile.repository;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Song;
 
-/**
- * Created by User on 05.01.2016.
- */
 public interface SongRepository {
 
     /**
@@ -45,4 +43,12 @@ public interface SongRepository {
     Long getCurrentSongId();
 
     void setCurrentSongId(Long currentSongId);
+
+    /**
+     * Get URI of song by it's ID in MediaStore.
+     *
+     * @param songId ID of song in MediaStore.
+     * @return URI of the song.
+     */
+    Uri getSongUri(Long songId);
 }
