@@ -1,23 +1,13 @@
 package itukraine.com.ua.bestmobile.ui.activity;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,61 +20,29 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.data.DatabaseManager;
-import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.presenter.MainPresenterImpl;
-import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
-import itukraine.com.ua.bestmobile.repository.SongRepository;
-import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
-import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
-import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment;
 import itukraine.com.ua.bestmobile.ui.fragment.FeedbackFragment;
 import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
-import itukraine.com.ua.bestmobile.util.ImageUtil;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainView {
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        MainView {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static boolean isActive = false;
     private Toolbar mToolbar;
+
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
+
     private View mNavHeaderView;
     private ImageButton mNextSongBtnNavHeader;
     private ImageButton mPrevSongBtnNavHeader;
     private ImageButton mPlaySongBtnNavHeader;
-    private PlaybackService mPlaybackService;
-    private Intent mPlayIntent;
-    private boolean mMusicBound = false;
-    private BroadcastReceiver receiverProgressUpdate;
-    private BroadcastReceiver receiverInfoUpdate;
+
     private MainPresenter mainPresenter;
-
-    private PlaylistRepository playlistRepository;
-    private SongRepository songRepository;
-    //connection to the service
-    private ServiceConnection playbackConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
-            //get service
-            mPlaybackService = binder.getService();
-            mMusicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mMusicBound = false;
-        }
-    };
-
-    public PlaybackService getPlaybackService() {
-        return mPlaybackService;
-    }
 
     public Toolbar getToolbar() {
         return mToolbar;
@@ -98,18 +56,10 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        openFragment(new PlayerFragment());
-
         initNavigationDrawer();
-
         initNavigationHeaderControls();
 
         mainPresenter = new MainPresenterImpl(this);
-
-        DatabaseManager.getInstance(this).getWritableDatabase();
-
-        playlistRepository = new PlaylistRepositoryImpl(this);
-        songRepository = new SongRepositoryImpl(this);
     }
 
     private void initNavigationDrawer() {
@@ -140,110 +90,33 @@ public class MainActivity extends AppCompatActivity
         mNextSongBtnNavHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaybackService.nextSong();
+                mainPresenter.onHeaderNextButtonPressed();
             }
         });
 
         mPrevSongBtnNavHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaybackService.prevSong();
+                mainPresenter.onHeaderPreviousButtonPressed();
             }
         });
 
         mPlaySongBtnNavHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaybackService.smartPlay();
-                updateNavigationHeaderControls();
+                mainPresenter.onHeaderPlayButtonPressed();
             }
         });
 
-        receiverProgressUpdate = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int pos = intent.getIntExtra(PlaybackService.EXTRA_PROGRESS, 0);
-                sendCurrentSongDurationToFragment(pos);
-            }
-        };
-
-        receiverInfoUpdate = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                boolean infoUpdate = intent.getBooleanExtra(PlaybackService.EXTRA_INFO_CHANGED, false);
-                if (infoUpdate) {
-                    sendCurrentSongUpdateRequestToFragment();
-                    Log.i(TAG, "Service: " + mPlaybackService);
-                    updateNavigationHeaderSongInfo();
-                    updateNavHeaderPlayButton();
-                }
-            }
-        };
     }
 
-    public void updateNavHeaderPlayButton() {
-        if (mPlaybackService.isPlaying()) {
-            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_play);
-        }
-    }
-
+    /**
+     * Open fragment(support) passed to parameter in current activity.
+     *
+     * @param fragment Fragment which should be opened.
+     */
     @Override
-    public void sendCurrentSongDurationToFragment(int pos) {
-        Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-        if (currentFragment instanceof PlayerFragment) {
-            ((PlayerFragment) currentFragment).updateSongProgress(pos);
-        }
-    }
-
-    @Override
-    public void sendCurrentSongUpdateRequestToFragment() {
-        Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-        if (currentFragment instanceof PlayerFragment) {
-            ((PlayerFragment) currentFragment).displaySongData();
-        }
-    }
-
-    public void updateNavigationHeaderSongInfo() {
-        Song current = mPlaybackService.getCurrentSong();
-        Drawable art;
-        Bitmap bitmap = songRepository.getAlbumArt(current.albumId);
-        if (bitmap == null) {
-            art = getResources().getDrawable(R.drawable.default_song_picture);
-        } else {
-            art = new BitmapDrawable(
-                    getResources(),
-                    ImageUtil.getInstance().getScaledBitmap1to1(this, bitmap));
-        }
-
-        art.setColorFilter(Color.argb(50, 155, 155, 155), PorterDuff.Mode.SRC_ATOP);
-        mNavHeaderView.setBackground(art);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mPlayIntent == null) {
-            mPlayIntent = new Intent(this, PlaybackService.class);
-            bindService(mPlayIntent, playbackConnection, Context.BIND_AUTO_CREATE);
-            startService(mPlayIntent);
-        }
-
-        LocalBroadcastManager.getInstance(this).registerReceiver((receiverProgressUpdate),
-                new IntentFilter(PlaybackService.PLAYBACK_PROGRESS_UPDATE));
-        LocalBroadcastManager.getInstance(this).registerReceiver((receiverInfoUpdate),
-                new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
-    }
-
-    @Override
-    protected void onStop() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverProgressUpdate);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverInfoUpdate);
-        super.onStop();
-    }
-
-    private void openFragment(Fragment fragment) {
+    public void openFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.main_fragment, fragment).commit();
     }
@@ -252,10 +125,13 @@ public class MainActivity extends AppCompatActivity
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
+            // if drawer is open - close
             drawer.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            // if back stack is empty minimize application
             moveTaskToBack(true);
         } else {
+            // if back stack ISN'T empty - go back
             super.onBackPressed();
         }
     }
@@ -280,6 +156,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Clear fragments "back stack".
+     */
     @Override
     public void clearBackStack() {
         FragmentManager fm = getSupportFragmentManager();
@@ -305,26 +184,40 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        unbindService(playbackConnection);
-        stopService(mPlayIntent);
-        Log.i(TAG, "Activity destroyed");
-        mPlaybackService = null;
+        mainPresenter.onDestroy();
+
         super.onDestroy();
     }
 
+    /**
+     * Hide keyboard.
+     *
+     * @param view Base focused view.
+     */
     @Override
     public void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    /**
+     * Set play button drawable in navigation drawer header.
+     *
+     * @param drawableId Drawable resource id.
+     */
     @Override
-    public void updateNavigationHeaderControls() {
-        if (mPlaybackService.isPlaying()) {
-            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlaySongBtnNavHeader.setBackgroundResource(android.R.drawable.ic_media_play);
-        }
+    public void setNavigationHeaderPlayButtonDrawable(@DrawableRes int drawableId) {
+        mPlaySongBtnNavHeader.setBackgroundResource(drawableId);
+    }
+
+    /**
+     * Set drawable to navigation drawer header.
+     *
+     * @param drawable Drawable to set.
+     */
+    @Override
+    public void setNavigationHeaderBackgroundDrawable(Drawable drawable) {
+        mNavHeaderView.setBackground(drawable);
     }
 
     private class CustomNavDrawerListener extends ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
@@ -335,24 +228,18 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onDrawerOpened(View drawerView) {
-            Log.i(TAG, "Drawer open");
-
             // hide keyboard when drawer open
             hideKeyboard(drawerView);
 
-            updateNavigationHeaderControls();
+            mainPresenter.updateNavigationHeaderControls();
         }
 
         @Override
         public void onDrawerClosed(View drawerView) {
-            Log.i(TAG, "Drawer close");
-
-            sendCurrentSongUpdateRequestToFragment();
         }
 
         @Override
         public void onDrawerStateChanged(int newState) {
-            Log.i(TAG, "Drawer change");
         }
 
     }

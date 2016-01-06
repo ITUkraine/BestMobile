@@ -1,17 +1,19 @@
 package itukraine.com.ua.bestmobile.ui.activity;
 
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 public interface MainView {
 
-    void hideKeyboard(View view);
+    void setNavigationHeaderPlayButtonDrawable(@DrawableRes int drawableId);
 
-    void updateNavigationHeaderControls();
+    void setNavigationHeaderBackgroundDrawable(Drawable drawable);
 
     void clearBackStack();
 
-    void sendCurrentSongDurationToFragment(int durationPosition);
+    void openFragment(Fragment fragment);
 
-    void sendCurrentSongUpdateRequestToFragment();
-
+    void hideKeyboard(View view);
 }

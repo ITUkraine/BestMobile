@@ -2,8 +2,20 @@ package itukraine.com.ua.bestmobile.presenter;
 
 public interface MainPresenter {
 
-    void onCreate();
-
     void onDestroy();
+
+    void updateNavigationHeaderControls();
+
+    void updateNavigationHeaderSongInfo();
+
+    void onHeaderPlayButtonPressed();
+
+    void onHeaderPreviousButtonPressed();
+
+    void onHeaderNextButtonPressed();
+
+    void startPlaybackService();
+
+    void stopPlaybackService();
 
 }
