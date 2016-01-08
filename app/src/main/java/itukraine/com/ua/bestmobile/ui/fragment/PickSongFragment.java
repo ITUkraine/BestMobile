@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,51 +16,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.entity.Playlist;
-import itukraine.com.ua.bestmobile.entity.Song;
-import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
-import itukraine.com.ua.bestmobile.repository.SongRepository;
-import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
-import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
+import itukraine.com.ua.bestmobile.presenter.PickSongPresenter;
+import itukraine.com.ua.bestmobile.presenter.impl.PickSongPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.adapter.PickSongAdapter;
+import itukraine.com.ua.bestmobile.ui.fragment.view.PickSongView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class PickSongFragment extends Fragment {
-
-    private static final String TAG = PickSongFragment.class.getCanonicalName();
-
-    private boolean isNewPlaylist;
+public class PickSongFragment extends Fragment implements PickSongView {
 
     private RecyclerView mRecyclerView;
-    private PickSongAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private EditText editSearch;
     private ImageView imageClearSearch;
-    private FloatingActionButton addSongsButton;
 
     private Context mContext;
 
-    private PlaylistRepository playlistRepository;
-    private SongRepository songRepository;
-
-    private List<Song> allSongs;
+    private boolean isNewPlaylist;
     private String playlistName;
-    private Comparator<Song> alphabeticalSongComparator = new Comparator<Song>() {
-        public int compare(Song s1, Song s2) {
-            return s1.artist.toLowerCase().compareTo(s2.artist.toLowerCase());
-        }
-    };
+
+    private PickSongPresenter pickSongPresenter;
 
     public PickSongFragment() {
     }
@@ -69,33 +44,62 @@ public class PickSongFragment extends Fragment {
     public PickSongFragment(String playlistName, boolean isNewPlaylist) {
         this.playlistName = playlistName;
         this.isNewPlaylist = isNewPlaylist;
-        playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
-        songRepository = new SongRepositoryImpl(App.getInstance());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pick_song_fragment, container, false);
+
+        initSearchViews(view);
+
+        initAddSongsButton(view);
+
+        initRecyclerView(view);
+
+        pickSongPresenter = new PickSongPresenterImpl(this);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        pickSongPresenter.init(playlistName, isNewPlaylist);
+    }
+
+    private void initRecyclerView(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.songs_view);
 
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
+                new OnItemClickListener()));
+    }
+
+    private void initSearchViews(View view) {
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((PickSongAdapter) mRecyclerView.getAdapter()).flushFilter();
-                imageClearSearch.setVisibility(View.GONE);
-                editSearch.setText("");
+                pickSongPresenter.clearFilter();
             }
         });
+
         editSearch = (EditText) view.findViewById(R.id.editSearch);
         editSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = editSearch.getText().toString();
-                ((PickSongAdapter) mRecyclerView.getAdapter()).setFilter(query);
-                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+                pickSongPresenter.filterSongs();
             }
 
             @Override
@@ -104,58 +108,56 @@ public class PickSongFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
+    }
 
-        addSongsButton = (FloatingActionButton) view.findViewById(R.id.add_songs_to_playlist);
+    @Override
+    public void displayClearSearchButton(boolean isDisplayed) {
+        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public String getSearchQuery() {
+        return editSearch.getText().toString();
+    }
+
+    @Override
+    public void clearSearchQuery() {
+        editSearch.setText("");
+    }
+
+    @Override
+    public void showNotificationToastToSelectSongs() {
+        Toast.makeText(mContext, R.string.msg_select_songs, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setAdapter(PickSongAdapter adapter) {
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    private void initAddSongsButton(View view) {
+        FloatingActionButton addSongsButton = (FloatingActionButton) view.findViewById(R.id.add_songs_to_playlist);
         addSongsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
         addSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mAdapter.selectedSongs.size() == 0) {
-                    Toast.makeText(mContext, R.string.msg_at_least_one_song, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Playlist newPlaylist = new Playlist(playlistName);
-                newPlaylist.songsId.clear();
-                newPlaylist.songsId.addAll(mAdapter.selectedSongs);
-                newPlaylist.totalTime = playlistRepository.calculateTotalDuration(newPlaylist);
-                if (isNewPlaylist) {
-                    playlistRepository.addPlaylist(newPlaylist);
-                } else {
-                    playlistRepository.updatePlaylist(newPlaylist);
-                }
+                if (pickSongPresenter.checkIfSongsWasSelected()) {
 
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new AllPlaylistsFragment()).commit();
+                    pickSongPresenter.createOrUpdatePlaylist();
+
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment, new AllPlaylistsFragment())
+                            .commit();
+                }
             }
         });
+    }
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        allSongs = songRepository.getAllSongs();
-
-        Collections.sort(allSongs, alphabeticalSongComparator);
-
-        Playlist playlist = playlistRepository.findPlaylistByName(playlistName);
-
-        mAdapter = new PickSongAdapter(mContext, allSongs, playlist, isNewPlaylist);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
-                new OnItemClickListener()));
-
-        Toast.makeText(mContext, R.string.msg_select_songs, Toast.LENGTH_LONG).show();
-
-        return view;
+    @Override
+    public void showErrorToast() {
+        Toast.makeText(mContext, R.string.msg_at_least_one_song, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -168,12 +170,7 @@ public class PickSongFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-            if (!mAdapter.selectedSongs.contains(mAdapter.visibleSongs.get(position).id)) {
-                mAdapter.selectedSongs.add(mAdapter.visibleSongs.get(position).id);
-            } else {
-                mAdapter.selectedSongs.remove(mAdapter.visibleSongs.get(position).id);
-            }
-            mAdapter.notifyItemChanged(position);
+            pickSongPresenter.selectSongFromList(position);
         }
 
     }
