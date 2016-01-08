@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.interactor;
+package itukraine.com.ua.bestmobile.interactor.impl;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
 import itukraine.com.ua.bestmobile.repository.SongRepository;
 import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;

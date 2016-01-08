@@ -1,4 +1,4 @@
-package itukraine.com.ua.bestmobile.ui.fragment;
+package itukraine.com.ua.bestmobile.ui.fragment.view;
 
 import java.util.List;
 

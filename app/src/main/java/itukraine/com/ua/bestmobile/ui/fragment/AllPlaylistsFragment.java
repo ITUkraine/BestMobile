@@ -25,9 +25,10 @@ import java.util.List;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenter;
-import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenterImpl;
+import itukraine.com.ua.bestmobile.presenter.impl.AllPlaylistPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 import itukraine.com.ua.bestmobile.ui.adapter.PlaylistAdapter;
+import itukraine.com.ua.bestmobile.ui.fragment.view.AllPlaylistView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
