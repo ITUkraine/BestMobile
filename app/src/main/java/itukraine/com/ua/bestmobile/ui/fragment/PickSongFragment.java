@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.PickSongPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.PickSongPresenterImpl;
@@ -38,18 +39,14 @@ public class PickSongFragment extends Fragment implements PickSongView {
 
     private PickSongPresenter pickSongPresenter;
 
-    public PickSongFragment() {
-    }
-
-    public PickSongFragment(String playlistName, boolean isNewPlaylist) {
-        this.playlistName = playlistName;
-        this.isNewPlaylist = isNewPlaylist;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pick_song_fragment, container, false);
+
+        Bundle bundle = this.getArguments();
+        this.playlistName = bundle.getString(Constants.PLAYLIST_NAME);
+        this.isNewPlaylist = bundle.getBoolean(Constants.PLAYLIST_IS_NEW);
 
         initSearchViews(view);
 

@@ -10,6 +10,8 @@ public interface PlayerInteractor {
 
     void setPlaylist(Playlist playlist);
 
+    void setPlaylist(String playlistName);
+
     void setCurrentSongPosition(int position);
 
     void loadLatestPlayedPlaylist();

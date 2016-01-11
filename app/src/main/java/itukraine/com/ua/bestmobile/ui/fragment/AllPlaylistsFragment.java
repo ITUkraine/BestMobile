@@ -20,10 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.util.List;
-
+import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.AllPlaylistPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
@@ -37,13 +35,10 @@ import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
  */
 public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
 
-    private static final String TAG = AllPlaylistsFragment.class.getCanonicalName();
 
     private AllPlaylistPresenter allPlaylistPresenter;
 
     private RecyclerView mRecyclerView;
-    private PlaylistAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private EditText editSearch;
     private ImageView imageClearSearch;
@@ -51,14 +46,12 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
 
     private Context mContext;
 
-    private MainActivity activity;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
 
-        activity = (MainActivity) getActivity();
+        MainActivity activity = (MainActivity) getActivity();
         activity.getToolbar().setTitle(R.string.playlists);
 
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
@@ -76,18 +69,48 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
     }
 
     @Override
-    public void setPlaylists(List<Playlist> playlists) {
-        mAdapter = new PlaylistAdapter(mContext, playlists);
-        mRecyclerView.setAdapter(mAdapter);
+    public void setAdapter(PlaylistAdapter adapter) {
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public String getSearchQuery() {
+        return editSearch.getText().toString();
+    }
+
+    @Override
+    public void clearSearchQuery() {
+        editSearch.setText("");
+    }
+
+    @Override
+    public void displayClearSearchButton(boolean isDisplayed) {
+        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void displayErrorToastThatPlaylistAlreadyExist() {
+        Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void displayErrorToastThatPlaylistMustHaveAtLeastOneChar() {
+        Toast.makeText(mContext, R.string.msg_at_least_one_letter, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void openFragmentWithBackStack(Fragment fragment) {
+        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void initListeners() {
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((PlaylistAdapter) mRecyclerView.getAdapter()).flushFilter();
-                imageClearSearch.setVisibility(View.GONE);
-                editSearch.setText("");
+                allPlaylistPresenter.clearFilter();
             }
         });
 
@@ -95,9 +118,7 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = editSearch.getText().toString();
-                ((PlaylistAdapter) mRecyclerView.getAdapter()).setFilter(query);
-                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+                allPlaylistPresenter.filterSongs();
             }
 
             @Override
@@ -106,7 +127,6 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -121,7 +141,7 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
     private void initRecycleView(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_view);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(mContext);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new RecyclerViewLineDevider(getResources()));
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext,
@@ -134,7 +154,8 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
         mContext = context;
     }
 
-    private void displayConfirmDeleteDialog(final int position) {
+    @Override
+    public void displayConfirmDeleteDialog(final int position) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(
                 mContext.getString(R.string.msg_confirm_delete_playlist))
@@ -142,7 +163,6 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                 @SuppressWarnings("unused") final int id) {
                 allPlaylistPresenter.deletePlaylist(position);
-                mAdapter.notifyDataSetChanged();
             }
         }).setNegativeButton(mContext.getString(R.string.btn_no), new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
@@ -152,7 +172,8 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
         builder.show();
     }
 
-    private void displayPlaylistTitleDialog(final Integer position, final boolean isNewPlaylist) {
+    @Override
+    public void displayPlaylistTitleDialog(final Integer position, final boolean isNewPlaylist) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 getActivity());
         builder.setTitle(isNewPlaylist ? mContext.getString(R.string.dlg_create_playlist) : mContext.getString(R.string.dlg_rename_playlist));
@@ -174,24 +195,30 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
                     public void onClick(View view) {
                         String newPlaylistName = input.getText().toString();
                         if (newPlaylistName.equals("")) {
-                            Toast.makeText(mContext, R.string.msg_at_least_one_letter, Toast.LENGTH_LONG).show();
+                            displayErrorToastThatPlaylistMustHaveAtLeastOneChar();
                             return;
                         }
-                        if (newPlaylistName.toLowerCase().equals(getResources().getString(R.string.all_songs_playlist_name).toLowerCase())
-                                || playlistRepository.findPlaylistByName(newPlaylistName) != null) {
-                            Toast.makeText(mContext, R.string.msg_playlist_exist, Toast.LENGTH_LONG).show();
+                        if (allPlaylistPresenter.isPlaylistExist(newPlaylistName)) {
+                            displayErrorToastThatPlaylistAlreadyExist();
                             return;
                         }
                         if (!isNewPlaylist) {
-                            String oldPlaylistName = playlists.get(position).name;
-                            playlistRepository.renamePlaylist(oldPlaylistName, newPlaylistName);
-                            playlists.get(position).name = newPlaylistName;
-                            mAdapter.notifyItemChanged(position);
+                            allPlaylistPresenter.renamePlaylist(position, newPlaylistName);
                             mAlertDialog.cancel();
                             return;
                         }
                         mAlertDialog.cancel();
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, new PickSongFragment(newPlaylistName, true)).addToBackStack(null).commit();
+
+                        PickSongFragment pickSongFragment = new PickSongFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.PLAYLIST_NAME, newPlaylistName);
+                        bundle.putBoolean(Constants.PLAYLIST_IS_NEW, true);
+                        pickSongFragment.setArguments(bundle);
+
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.main_fragment, pickSongFragment)
+                                .addToBackStack(null)
+                                .commit();
                     }
                 });
 
@@ -208,47 +235,41 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
         mAlertDialog.show();
     }
 
+    public void displayPossibleOperationForPlaylistDialog(final int position) {
+        final boolean isDefaultPlaylist = allPlaylistPresenter.isPlaylistDefault(position);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(isDefaultPlaylist ? R.array.play : R.array.playlist_action_array, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // Play selected playlist
+                        allPlaylistPresenter.selectAndPlayPlaylist(position);
+                        break;
+                    case 1:
+                        //Rename playlist
+                        displayPlaylistTitleDialog(position, false);
+                        break;
+                    case 2:
+                        //Delete playlist
+                        displayConfirmDeleteDialog(position);
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
         public void onItemClick(View childView, int position) {
-            ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment, new SongListFragment(playlists.get(position)))
-                    .addToBackStack(null)
-                    .commit();
+            allPlaylistPresenter.openSongListFragmentForSelectedPlaylist(position);
         }
 
         @Override
         public void onItemLongPress(View childView, final int position) {
-
-            final boolean isDefaultPlaylist = playlists.get(position).name.equals(getResources().getString(R.string.all_songs_playlist_name));
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setItems(isDefaultPlaylist ? R.array.play : R.array.playlist_action_array, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case 0:
-                            // Play playlist
-                            if (isDefaultPlaylist) {
-                                activity.getPlaybackService().setPlaylist(new Playlist("All songs"));// TODO
-                            } else {
-                                activity.getPlaybackService().setPlaylist(
-                                        playlistRepository.findPlaylistByName(playlists.get(position).name));
-                            }
-                            activity.getPlaybackService().playSong();
-                            break;
-                        case 1:
-                            //Rename playlist
-                            displayPlaylistTitleDialog(position, false);
-                            break;
-                        case 2:
-                            //Delete playlist
-                            displayConfirmDeleteDialog(position);
-                            break;
-                    }
-                }
-            });
-            builder.show();
+            displayPossibleOperationForPlaylistDialog(position);
         }
 
     }

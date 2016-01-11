@@ -10,7 +10,13 @@ import itukraine.com.ua.bestmobile.entity.Playlist;
 public interface AllPlaylistInteractor {
     List<Playlist> getAllPlaylists();
 
+    Playlist getPlaylist(String name);
+
     void deletePlaylist(String name);
 
     void updateDefaultPlaylist();
+
+    boolean isPlaylistDefault(String playlistName);
+
+    void renamePlaylist(String oldName, String newName);
 }

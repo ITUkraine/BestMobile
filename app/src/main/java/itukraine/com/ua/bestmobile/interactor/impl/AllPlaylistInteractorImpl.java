@@ -10,10 +10,8 @@ import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
 import itukraine.com.ua.bestmobile.repository.SongRepository;
 import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
+import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 
-/**
- * Created by User on 05.01.2016.
- */
 public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
 
     private PlaylistRepository playlistRepository;
@@ -21,11 +19,17 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
 
     public AllPlaylistInteractorImpl() {
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
+        songRepository = new SongRepositoryImpl(App.getInstance());
     }
 
     @Override
     public List<Playlist> getAllPlaylists() {
         return playlistRepository.getPlaylists();
+    }
+
+    @Override
+    public Playlist getPlaylist(String name) {
+        return playlistRepository.findPlaylistByName(name);
     }
 
     @Override
@@ -40,5 +44,16 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
             defaultPlaylist.songsId.add(song.id);
         }
         playlistRepository.addPlaylist(defaultPlaylist);
+    }
+
+    @Override
+    public boolean isPlaylistDefault(String playlistName) {
+        return playlistName.toLowerCase().equals(
+                App.getInstance().getResources().getString(R.string.all_songs_playlist_name).toLowerCase());
+    }
+
+    @Override
+    public void renamePlaylist(String oldName, String newName) {
+        playlistRepository.renamePlaylist(oldName, newName);
     }
 }

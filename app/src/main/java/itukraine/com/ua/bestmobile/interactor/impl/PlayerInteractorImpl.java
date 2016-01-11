@@ -54,6 +54,11 @@ public class PlayerInteractorImpl implements
     }
 
     @Override
+    public void setPlaylist(String playlistName) {
+        setPlaylist(playlistRepository.findPlaylistByName(playlistName));
+    }
+
+    @Override
     public void setCurrentSongPosition(int position) {
         songPosInPlaylist = position;
     }

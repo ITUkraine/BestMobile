@@ -1,13 +1,26 @@
 package itukraine.com.ua.bestmobile.ui.fragment.view;
 
-import java.util.List;
+import android.support.v4.app.Fragment;
 
-import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.ui.adapter.PlaylistAdapter;
 
-/**
- * Created by User on 05.01.2016.
- */
 public interface AllPlaylistView {
 
-    void setPlaylists(List<Playlist> playlists);
+    void setAdapter(PlaylistAdapter adapter);
+
+    String getSearchQuery();
+
+    void clearSearchQuery();
+
+    void displayClearSearchButton(boolean isDisplayed);
+
+    void displayErrorToastThatPlaylistAlreadyExist();
+
+    void displayErrorToastThatPlaylistMustHaveAtLeastOneChar();
+
+    void openFragmentWithBackStack(Fragment fragment);
+
+    void displayConfirmDeleteDialog(final int position);
+
+    void displayPlaylistTitleDialog(final Integer position, final boolean isNewPlaylist);
 }
