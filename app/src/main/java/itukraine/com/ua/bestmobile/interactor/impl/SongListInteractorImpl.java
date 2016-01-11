@@ -1,5 +1,7 @@
 package itukraine.com.ua.bestmobile.interactor.impl;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
@@ -51,5 +53,10 @@ public class SongListInteractorImpl implements SongListInteractor {
     @Override
     public void deletePlaylist(String playlistName) {
         playlistRepository.deletePlaylistByName(playlistName);
+    }
+
+    @Override
+    public Bitmap getAlbumArt(Long albumId) {
+        return songRepository.getAlbumArt(albumId);
     }
 }

@@ -9,7 +9,7 @@ import itukraine.com.ua.bestmobile.entity.Playlist;
  */
 public interface PlaylistRepository {
 
-    void addPlaylist(Playlist playlist);
+    void savePlaylist(Playlist playlist);
 
     List<Playlist> getPlaylists();
 

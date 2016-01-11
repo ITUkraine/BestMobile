@@ -62,7 +62,7 @@ public class PickSongFragment extends Fragment implements PickSongView {
     @Override
     public void onResume() {
         super.onResume();
-        pickSongPresenter.init(playlistName, isNewPlaylist);
+        pickSongPresenter.init(playlistName);
     }
 
     private void initRecyclerView(View view) {

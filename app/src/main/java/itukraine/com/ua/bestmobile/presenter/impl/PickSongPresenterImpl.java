@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.interactor.PickSongInteractor;
@@ -20,7 +19,6 @@ public class PickSongPresenterImpl implements PickSongPresenter {
 
     private PickSongAdapter mAdapter;
 
-    private boolean isNewPlaylist;
     private String playlistName;
 
     private Comparator<Song> alphabeticalSongComparator = new Comparator<Song>() {
@@ -35,15 +33,14 @@ public class PickSongPresenterImpl implements PickSongPresenter {
     }
 
     @Override
-    public void init(String playlistName, boolean isNewPlaylist) {
-        this.isNewPlaylist = isNewPlaylist;
+    public void init(String playlistName) {
         this.playlistName = playlistName;
 
         Playlist playlist = pickSongInteractor.getPlaylist(playlistName);
-        List<Song> songs = pickSongInteractor.getAllSongs();
-        Collections.sort(songs, alphabeticalSongComparator);
+        List<Song> allSongs = pickSongInteractor.getAllSongs();
+        Collections.sort(allSongs, alphabeticalSongComparator);
 
-        mAdapter = new PickSongAdapter(App.getInstance(), songs, playlist, isNewPlaylist);
+        mAdapter = new PickSongAdapter(allSongs, playlist);
 
         pickSongView.setAdapter(mAdapter);
 
@@ -56,7 +53,7 @@ public class PickSongPresenterImpl implements PickSongPresenter {
         newPlaylist.songsId.clear();
         newPlaylist.songsId.addAll(mAdapter.selectedSongs);
         newPlaylist.totalTime = pickSongInteractor.calculateDurationOfPlaylist(newPlaylist);
-        pickSongInteractor.createOrUpdatePlaylist(newPlaylist, isNewPlaylist);
+        pickSongInteractor.createOrUpdatePlaylist(newPlaylist);
     }
 
     @Override

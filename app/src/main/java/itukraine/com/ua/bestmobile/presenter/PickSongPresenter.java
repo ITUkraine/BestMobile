@@ -2,7 +2,7 @@ package itukraine.com.ua.bestmobile.presenter;
 
 public interface PickSongPresenter {
 
-    void init(String playlistName, boolean isNewPlaylist);
+    void init(String playlistName);
 
     void createOrUpdatePlaylist();
 

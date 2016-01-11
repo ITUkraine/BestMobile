@@ -43,7 +43,7 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
         for (Song song : songRepository.getAllSongs()) {
             defaultPlaylist.songsId.add(song.id);
         }
-        playlistRepository.addPlaylist(defaultPlaylist);
+        playlistRepository.savePlaylist(defaultPlaylist);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package itukraine.com.ua.bestmobile.ui.adapter;
 
-import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,30 +15,29 @@ import java.util.List;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.interactor.PickSongInteractor;
+import itukraine.com.ua.bestmobile.interactor.impl.PickSongInteractorImpl;
 
 public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
 
     private static final String TAG = PickSongAdapter.class.getCanonicalName();
     public List<Long> selectedSongs = new ArrayList<>();
     public List<Song> visibleSongs;
+    private PickSongInteractor pickSongInteractor;
     private List<Song> allSongs;
-    private Context mContext;
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public PickSongAdapter(Context context, List<Song> allSongs, Playlist playlist, boolean isNewPlaylist) {
+    public PickSongAdapter(List<Song> allSongs, Playlist playlist) {
         this.allSongs = allSongs;
         this.visibleSongs = allSongs;
-        this.mContext = context;
-        if (!isNewPlaylist) {
+        if (playlist != null) {
             selectedSongs = playlist.songsId;
         }
+        pickSongInteractor = new PickSongInteractorImpl();
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public PickSongAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_song, parent, false);
 
@@ -55,22 +54,20 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
         return visibleSongs.get(pos);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mSongTitle.setText(getItem(position).title);
         holder.mSongArtist.setText(getItem(position).artist);
-        /*Bitmap albumArt = MusicUtil.getInstance().getAlbumart(mContext, getItem(position).albumId); TODO move logic to PickSongFragment
+        Bitmap albumArt = pickSongInteractor.getAlbumArt(getItem(position).albumId);
         if (albumArt != null) {
             holder.mAlbumArt.setImageBitmap(albumArt);
         } else {
             holder.mAlbumArt.setImageResource(R.drawable.default_song_picture);
-        }*/
+        }
 
         holder.mWholeItem.setSelected(selectedSongs.contains(getItem(position).id));
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return visibleSongs.size();
@@ -93,11 +90,7 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         public TextView mSongTitle;
         public TextView mSongArtist;
         public ImageView mAlbumArt;

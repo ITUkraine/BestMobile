@@ -1,8 +1,10 @@
 package itukraine.com.ua.bestmobile.presenter.impl;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
@@ -21,14 +23,16 @@ import itukraine.com.ua.bestmobile.ui.fragment.view.SongListView;
 
 public class SongListPresenterImpl implements SongListPresenter {
 
+    private static final String TAG = SongListPresenterImpl.class.getCanonicalName();
     private SongListView songListView;
     private SongListInteractor songListInteractor;
     private PlayerInteractor playerInteractor;
 
     private SongAdapter mAdapter;
 
-    private List<Song> songList;
     private Playlist currentPlaylist;
+    private List<Song> songList;
+    private HashMap<Long, Bitmap> albumsArt;
 
     public SongListPresenterImpl(SongListView songListView, String playlistName) {
         this.songListView = songListView;
@@ -42,7 +46,7 @@ public class SongListPresenterImpl implements SongListPresenter {
     @Override
     public void onResume() {
         songList = songListInteractor.getSongsFromPlaylist(currentPlaylist);
-        mAdapter = new SongAdapter(App.getInstance(), songList);
+        mAdapter = new SongAdapter(songList);
         songListView.setAdapter(mAdapter);
 
         songListView.displayButtonAddSongsToPlaylist(
@@ -60,8 +64,6 @@ public class SongListPresenterImpl implements SongListPresenter {
 
         songList.remove(positionInPlaylist);
 
-        //Performance with notifyItemChanged() will be better,
-        // but exist issue https://code.google.com/p/android/issues/detail?id=77846
         mAdapter.notifyDataSetChanged();
     }
 

@@ -35,7 +35,7 @@ public class PlaylistRepositoryImpl implements PlaylistRepository {
     }
 
     @Override
-    public void addPlaylist(Playlist playlist) {
+    public void savePlaylist(Playlist playlist) {
         try {
             getDao().createOrUpdate(playlist);
         } catch (SQLException e) {

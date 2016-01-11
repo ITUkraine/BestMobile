@@ -1,5 +1,7 @@
 package itukraine.com.ua.bestmobile.interactor.impl;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
@@ -37,11 +39,13 @@ public class PickSongInteractorImpl implements PickSongInteractor {
     }
 
     @Override
-    public void createOrUpdatePlaylist(Playlist playlist, boolean isNewPlaylist) {
-        if (isNewPlaylist) {
-            playlistRepository.addPlaylist(playlist);
-        } else {
-            playlistRepository.updatePlaylist(playlist);
-        }
+    public void createOrUpdatePlaylist(Playlist playlist) {
+        playlistRepository.savePlaylist(playlist);
     }
+
+    @Override
+    public Bitmap getAlbumArt(Long albumId) {
+        return songRepository.getAlbumArt(albumId);
+    }
+
 }
