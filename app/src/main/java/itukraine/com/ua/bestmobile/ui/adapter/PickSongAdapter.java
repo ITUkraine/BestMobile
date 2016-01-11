@@ -18,13 +18,10 @@ import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.interactor.PickSongInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.PickSongInteractorImpl;
 
-public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHolder> {
+public class PickSongAdapter extends FilterSongAdapter<PickSongAdapter.ViewHolder> {
 
-    private static final String TAG = PickSongAdapter.class.getCanonicalName();
     public List<Long> selectedSongs = new ArrayList<>();
-    public List<Song> visibleSongs;
     private PickSongInteractor pickSongInteractor;
-    private List<Song> allSongs;
 
     public PickSongAdapter(List<Song> allSongs, Playlist playlist) {
         this.allSongs = allSongs;
@@ -50,10 +47,6 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
         return vh;
     }
 
-    private Song getItem(int pos) {
-        return visibleSongs.get(pos);
-    }
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mSongTitle.setText(getItem(position).title);
@@ -66,28 +59,6 @@ public class PickSongAdapter extends RecyclerView.Adapter<PickSongAdapter.ViewHo
         }
 
         holder.mWholeItem.setSelected(selectedSongs.contains(getItem(position).id));
-    }
-
-    @Override
-    public int getItemCount() {
-        return visibleSongs.size();
-    }
-
-    public void flushFilter() {
-        visibleSongs = new ArrayList<>();
-        visibleSongs.addAll(allSongs);
-        notifyDataSetChanged();
-    }
-
-    public void setFilter(String queryText) {
-
-        visibleSongs = new ArrayList<>();
-        for (Song song : allSongs) {
-            if (song.artist.toLowerCase().contains(queryText.toLowerCase())
-                    || song.title.toLowerCase().contains(queryText.toLowerCase()))
-                visibleSongs.add(song);
-        }
-        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

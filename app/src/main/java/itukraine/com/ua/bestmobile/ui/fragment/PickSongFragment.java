@@ -55,14 +55,8 @@ public class PickSongFragment extends Fragment implements PickSongView {
         initRecyclerView(view);
 
         pickSongPresenter = new PickSongPresenterImpl(this);
-
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         pickSongPresenter.init(playlistName);
+        return view;
     }
 
     private void initRecyclerView(View view) {

@@ -36,7 +36,7 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
         allPlaylistInteractor.updateDefaultPlaylist();
         playlists = allPlaylistInteractor.getAllPlaylists();
 
-        mAdapter = new PlaylistAdapter(App.getInstance(), playlists);
+        mAdapter = new PlaylistAdapter(playlists);
         allPlaylistView.setAdapter(mAdapter);
     }
 

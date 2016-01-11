@@ -8,23 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.interactor.impl.SongListInteractorImpl;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
-
-    private List<Song> visibleSongs;
-    private List<Song> allSongs;
+public class SongAdapter extends FilterSongAdapter<SongAdapter.ViewHolder> {
 
     private SongListInteractorImpl songListInteractor;
 
     public SongAdapter(List<Song> songs) {
-        this.allSongs = songs;
-        this.visibleSongs = songs;
+        allSongs = songs;
+        visibleSongs = songs;
         songListInteractor = new SongListInteractorImpl();
     }
 
@@ -42,10 +38,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         return vh;
     }
 
-    private Song getItem(int pos) {
-        return visibleSongs.get(pos);
-    }
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mSongTitle.setText(getItem(position).title);
@@ -56,28 +48,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         } else {
             holder.mAlbumArt.setImageResource(R.drawable.default_song_picture);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return visibleSongs.size();
-    }
-
-    public void flushFilter() {
-        visibleSongs = new ArrayList<>();
-        visibleSongs.addAll(allSongs);
-        notifyDataSetChanged();
-    }
-
-    public void setFilter(String queryText) {
-
-        visibleSongs = new ArrayList<>();
-        for (Song song : allSongs) {
-            if (song.artist.toLowerCase().contains(queryText.toLowerCase())
-                    || song.title.toLowerCase().contains(queryText.toLowerCase()))
-                visibleSongs.add(song);
-        }
-        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
