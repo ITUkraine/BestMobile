@@ -75,7 +75,7 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
     }
 
     private void scanMediaStore() {
-        App.getInstance().sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+        App.getInstance().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.parse("file://" + Environment.getExternalStorageDirectory())));
     }
 
