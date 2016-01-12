@@ -34,7 +34,6 @@ public class PickSongFragment extends Fragment implements PickSongView {
 
     private Context mContext;
 
-    private boolean isNewPlaylist;
     private String playlistName;
 
     private PickSongPresenter pickSongPresenter;
@@ -46,7 +45,6 @@ public class PickSongFragment extends Fragment implements PickSongView {
 
         Bundle bundle = this.getArguments();
         this.playlistName = bundle.getString(Constants.PLAYLIST_NAME);
-        this.isNewPlaylist = bundle.getBoolean(Constants.PLAYLIST_IS_NEW);
 
         initSearchViews(view);
 

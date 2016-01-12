@@ -39,8 +39,9 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public void deletePlaylist(int pos) {
-        allPlaylistInteractor.deletePlaylist(playlists.get(pos).name);
-        playlists.remove(pos);
+        allPlaylistInteractor.deletePlaylist(mAdapter.visiblePlaylists.get(pos).name);
+        mAdapter.allPlaylists.remove(mAdapter.visiblePlaylists.get(pos));
+        mAdapter.visiblePlaylists.remove(pos);
 
         mAdapter.notifyDataSetChanged();
     }
@@ -61,12 +62,12 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public boolean isPlaylistDefault(int positionInList) {
-        return allPlaylistInteractor.isPlaylistDefault(playlists.get(positionInList).name);
+        return allPlaylistInteractor.isPlaylistDefault(mAdapter.visiblePlaylists.get(positionInList).name);
     }
 
     @Override
     public void selectAndPlayPlaylist(int positionInList) {
-        playerInteractor.setPlaylist(playlists.get(positionInList).name);
+        playerInteractor.setPlaylist(mAdapter.visiblePlaylists.get(positionInList).name);
         try {
             playerInteractor.play();
         } catch (IOException e) {
@@ -76,11 +77,11 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public void renamePlaylist(int positionOfOldPlaylist, String newName) {
-        String oldPlaylistName = playlists.get(positionOfOldPlaylist).name;
+        String oldPlaylistName = mAdapter.visiblePlaylists.get(positionOfOldPlaylist).name;
 
         allPlaylistInteractor.renamePlaylist(oldPlaylistName, newName);
 
-        playlists.get(positionOfOldPlaylist).name = newName;
+        mAdapter.visiblePlaylists.get(positionOfOldPlaylist).name = newName;
 
         mAdapter.notifyItemChanged(positionOfOldPlaylist);
     }
@@ -94,7 +95,7 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
     public void openSongListFragmentForSelectedPlaylist(int playlistPosition) {
         SongListFragment songListFragment = new SongListFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.PLAYLIST_NAME, playlists.get(playlistPosition).name);
+        bundle.putString(Constants.PLAYLIST_NAME, mAdapter.visiblePlaylists.get(playlistPosition).name);
         songListFragment.setArguments(bundle);
         allPlaylistView.openFragmentWithBackStack(songListFragment);
     }
