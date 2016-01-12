@@ -14,4 +14,5 @@ public interface MainPresenter {
 
     void onHeaderNextButtonPressed();
 
+    void updatePlaylists();
 }

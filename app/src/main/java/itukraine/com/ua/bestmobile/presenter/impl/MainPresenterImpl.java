@@ -15,7 +15,9 @@ import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
+import itukraine.com.ua.bestmobile.interactor.impl.AllPlaylistInteractorImpl;
 import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
@@ -27,6 +29,7 @@ public class MainPresenterImpl implements MainPresenter {
     private MainView mainView;
 
     private PlayerInteractor playerInteractor;
+    private AllPlaylistInteractor allPlaylistInteractor;
 
     private BroadcastReceiver receiverInfoUpdate = new BroadcastReceiver() {
         @Override
@@ -39,6 +42,7 @@ public class MainPresenterImpl implements MainPresenter {
     public MainPresenterImpl(MainView view) {
         this.mainView = view;
         playerInteractor = new PlayerInteractorImpl();
+        allPlaylistInteractor = new AllPlaylistInteractorImpl();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
                 new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
@@ -106,5 +110,10 @@ public class MainPresenterImpl implements MainPresenter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updatePlaylists() {
+        allPlaylistInteractor.updatePlaylists();
     }
 }

@@ -19,4 +19,6 @@ public interface AllPlaylistInteractor {
     void renamePlaylist(String oldName, String newName);
 
     int getTotalTimeOfPlaylist(Playlist playlist);
+
+    void updatePlaylists();
 }

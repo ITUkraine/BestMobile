@@ -41,7 +41,8 @@ public class PlaylistAdapter extends FilterPlaylistAdapter<PlaylistAdapter.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mPlaylistName.setText(getItem(position).name);
-        holder.mPlaylistDuration.setText(TimeUtil.getInstance().formatTime(allPlaylistInteractor.getTotalTimeOfPlaylist(getItem(position))));
+        holder.mPlaylistDuration.setText(TimeUtil.getInstance()
+                .formatTime(allPlaylistInteractor.getTotalTimeOfPlaylist(getItem(position))));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
