@@ -7,18 +7,14 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
-import itukraine.com.ua.bestmobile.repository.SongRepository;
 import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
-import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 
 public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
 
     private PlaylistRepository playlistRepository;
-    private SongRepository songRepository;
 
     public AllPlaylistInteractorImpl() {
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
-        songRepository = new SongRepositoryImpl(App.getInstance());
     }
 
     @Override

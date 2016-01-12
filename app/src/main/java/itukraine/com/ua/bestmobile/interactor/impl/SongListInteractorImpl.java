@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
-import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.interactor.SongListInteractor;
@@ -26,13 +25,7 @@ public class SongListInteractorImpl implements SongListInteractor {
 
     @Override
     public List<Song> getSongsFromPlaylist(Playlist playlist) {
-        List<Song> songList;
-        if (playlist.name.equals(App.getInstance().getString(R.string.all_songs_playlist_name))) {
-            songList = songRepository.getAllSongs();
-        } else {
-            songList = songRepository.getSongsByID(playlist.songsId);
-        }
-        return songList;
+        return songRepository.getSongsByID(playlist.songsId);
     }
 
     @Override

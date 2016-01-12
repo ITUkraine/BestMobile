@@ -5,9 +5,7 @@ import android.os.Bundle;
 import java.io.IOException;
 import java.util.List;
 
-import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.Constants;
-import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
@@ -68,13 +66,7 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public void selectAndPlayPlaylist(int positionInList) {
-        boolean isDefaultPlaylist = isPlaylistDefault(positionInList);
-        if (isDefaultPlaylist) {
-            playerInteractor.setPlaylist(new Playlist(App.getInstance().getString(R.string.all_songs_playlist_name)));// TODO
-        } else {
-            playerInteractor.setPlaylist(playlists.get(positionInList).name);
-        }
-
+        playerInteractor.setPlaylist(playlists.get(positionInList).name);
         try {
             playerInteractor.play();
         } catch (IOException e) {
@@ -95,8 +87,7 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public boolean isPlaylistExist(String playlistName) {
-        return allPlaylistInteractor.isPlaylistDefault(playlistName)
-                || allPlaylistInteractor.getPlaylist(playlistName) != null;
+        return allPlaylistInteractor.getPlaylist(playlistName) != null;
     }
 
     @Override
