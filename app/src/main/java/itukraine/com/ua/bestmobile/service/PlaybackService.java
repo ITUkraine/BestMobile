@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
@@ -15,8 +14,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import itukraine.com.ua.bestmobile.R;
-import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
-import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 
 public class PlaybackService extends Service {
@@ -28,13 +25,10 @@ public class PlaybackService extends Service {
     private final static String TAG = PlaybackService.class.getSimpleName();
     private final IBinder mPlaybackBinder = new PlaybackBinder();
     private final int NOTIFICATION_ID = 281215;
-    MediaPlayer mMediaPlayer = null;
-    private int songPos;
+    private Notification notification;
 
     private NotificationManager mNM;
     private LocalBroadcastManager broadcaster;
-
-    private PlayerInteractor playerInteractor;
 
     @Nullable
     @Override
@@ -44,15 +38,11 @@ public class PlaybackService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        playerInteractor.stop();
         return false;
     }
 
     @Override
     public void onCreate() {
-        //create player
-        playerInteractor = new PlayerInteractorImpl();
-
         Log.i(TAG, "Service created");
 
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -60,17 +50,17 @@ public class PlaybackService extends Service {
         broadcaster = LocalBroadcastManager.getInstance(this);
     }
 
-    public void showNotification() {
+    private void showNotification(String artist, String songTitle) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
         // Set the info for the views that show in the notification panel.
-        Notification notification = new Notification.Builder(this)
+        notification = new Notification.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture))
                 .setSmallIcon(android.R.drawable.ic_media_play)
-                .setContentTitle(playerInteractor.getCurrentSongArtist())  // the artist
-                .setContentText(playerInteractor.getCurrentSongTitle())  // the song title
+                .setContentTitle(artist)  // the artist
+                .setContentText(songTitle)  // the song title
                 .setContentIntent(contentIntent)// The intent to send when the entry is clicked
                 .setWhen(0)
                 .setOngoing(true) // user can't close notification
@@ -79,7 +69,7 @@ public class PlaybackService extends Service {
         mNM.notify(NOTIFICATION_ID, notification);
     }
 
-    public void hideNotification() {
+    private void hideNotification() {
         mNM.cancel(NOTIFICATION_ID);
     }
 
@@ -88,7 +78,7 @@ public class PlaybackService extends Service {
         // display song info at first run
         sendInfoUpdate();
 
-        showNotification();
+        showNotification(null, null);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -105,10 +95,13 @@ public class PlaybackService extends Service {
         broadcaster.sendBroadcast(updateIntent);
     }
 
+    public void setNotificationSongInfo(String artist, String songTitle) {
+        showNotification(artist, songTitle);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        playerInteractor.stop();
         hideNotification();
         stopForeground(true);
         Log.i(TAG, "Service destroyed");
@@ -118,7 +111,7 @@ public class PlaybackService extends Service {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                while (MainActivity.isActive && playerInteractor.isPlaying()) {
+                while (MainActivity.isActive) {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {

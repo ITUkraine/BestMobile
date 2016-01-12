@@ -38,6 +38,8 @@ public class MediaPlayerRepositoryImpl implements
             MediaPlayer.OnCompletionListener onCompletionListener) {
         mediaPlayer.setOnCompletionListener(onCompletionListener);
         mediaPlayer.setOnErrorListener(onErrorListener);
+
+        mediaPlayer.setOnPreparedListener(this);
     }
 
     @Override
@@ -75,14 +77,19 @@ public class MediaPlayerRepositoryImpl implements
     @Override
     public void release() {
         if (mediaPlayer != null) {
-            mediaPlayer.start();
+            stop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
     }
 
     @Override
+    public void stop() {
+        mediaPlayer.stop();
+    }
+
+    @Override
     public void onPrepared(MediaPlayer mp) {
-        mediaPlayer.start();
+        mp.start();
     }
 }

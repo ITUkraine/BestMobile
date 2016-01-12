@@ -1,17 +1,14 @@
 package itukraine.com.ua.bestmobile.presenter.impl;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -31,21 +28,6 @@ public class MainPresenterImpl implements MainPresenter {
 
     private PlayerInteractor playerInteractor;
 
-    private Intent mPlayIntent;
-
-    private ServiceConnection playbackConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
-            // GER INSTANCE OF SERVICE HERE  -> binder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
     private BroadcastReceiver receiverInfoUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -61,8 +43,6 @@ public class MainPresenterImpl implements MainPresenter {
         this.mainView = view;
         playerInteractor = new PlayerInteractorImpl();
 
-        startPlaybackService();
-
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
                 new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
 
@@ -72,26 +52,9 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void onDestroy() {
-        stopPlaybackService();
-
         LocalBroadcastManager.getInstance(App.getInstance()).unregisterReceiver(receiverInfoUpdate);
 
         mainView = null;
-    }
-
-    @Override
-    public void startPlaybackService() {
-        if (mPlayIntent == null) {
-            mPlayIntent = new Intent(App.getInstance(), PlaybackService.class);
-            App.getInstance().bindService(mPlayIntent, playbackConnection, Context.BIND_AUTO_CREATE);
-            App.getInstance().startService(mPlayIntent);
-        }
-    }
-
-    @Override
-    public void stopPlaybackService() {
-        App.getInstance().unbindService(playbackConnection);
-        App.getInstance().stopService(mPlayIntent);
     }
 
     @Override

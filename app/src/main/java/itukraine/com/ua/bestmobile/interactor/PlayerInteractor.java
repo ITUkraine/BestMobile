@@ -12,6 +12,8 @@ public interface PlayerInteractor {
 
     void setPlaylist(String playlistName);
 
+    void updateDefaultPlaylist();
+
     void setCurrentSongPosition(int position);
 
     void loadLatestPlayedPlaylist();
@@ -19,6 +21,8 @@ public interface PlayerInteractor {
     void loadLatestPlayedSong();
 
     void play() throws IOException;
+
+    void playCurrentSong() throws IOException;
 
     void next() throws IOException;
 

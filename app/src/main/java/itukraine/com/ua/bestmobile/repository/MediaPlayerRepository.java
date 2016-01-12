@@ -20,6 +20,8 @@ public interface MediaPlayerRepository {
 
     void release();
 
+    void stop();
+
     void setListeners(
             MediaPlayer.OnErrorListener onErrorListener,
             MediaPlayer.OnCompletionListener onCompletionListener);

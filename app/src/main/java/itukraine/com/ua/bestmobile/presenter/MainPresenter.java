@@ -14,8 +14,4 @@ public interface MainPresenter {
 
     void onHeaderNextButtonPressed();
 
-    void startPlaybackService();
-
-    void stopPlaybackService();
-
 }

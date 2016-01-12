@@ -1,11 +1,16 @@
 package itukraine.com.ua.bestmobile.interactor.impl;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.os.IBinder;
+import android.util.Log;
 
 import java.io.IOException;
-import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
@@ -18,6 +23,7 @@ import itukraine.com.ua.bestmobile.repository.SongRepository;
 import itukraine.com.ua.bestmobile.repository.impl.MediaPlayerRepositoryImpl;
 import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
 import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
+import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
@@ -33,6 +39,21 @@ public class PlayerInteractorImpl implements
     private Playlist playlist;
     private int songPosInPlaylist;
 
+    private Intent mPlayIntent;
+    private PlaybackService playbackService;
+    private ServiceConnection playbackConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
+            playbackService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
     public PlayerInteractorImpl() {
         songRepository = new SongRepositoryImpl(App.getInstance());
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
@@ -40,8 +61,25 @@ public class PlayerInteractorImpl implements
         mediaPlayerRepository = MediaPlayerRepositoryImpl.getInstance();
         mediaPlayerRepository.setListeners(this, this);
 
+        updateDefaultPlaylist();
+
         loadLatestPlayedPlaylist();
         loadLatestPlayedSong();
+
+        startPlaybackService();
+    }
+
+    private void startPlaybackService() {
+        if (mPlayIntent == null) {
+            mPlayIntent = new Intent(App.getInstance(), PlaybackService.class);
+            App.getInstance().bindService(mPlayIntent, playbackConnection, Context.BIND_AUTO_CREATE);
+            App.getInstance().startService(mPlayIntent);
+        }
+    }
+
+    private void stopPlaybackService() {
+        App.getInstance().unbindService(playbackConnection);
+        App.getInstance().stopService(mPlayIntent);
     }
 
     @Override
@@ -51,6 +89,15 @@ public class PlayerInteractorImpl implements
         playlistRepository.setCurrentPlaylistName(playlist.name);
 
         songPosInPlaylist = 0;
+    }
+
+    @Override
+    public void updateDefaultPlaylist() {
+        Playlist defaultPlaylist = new Playlist(App.getInstance().getResources().getString(R.string.all_songs_playlist_name));
+        for (Song song : songRepository.getAllSongs()) {
+            defaultPlaylist.songsId.add(song.id);
+        }
+        playlistRepository.savePlaylist(defaultPlaylist);
     }
 
     @Override
@@ -65,14 +112,10 @@ public class PlayerInteractorImpl implements
 
     @Override
     public void loadLatestPlayedPlaylist() {
-        // TODO REWRITE LOGIC ABOUT "ALL SONGS" PLAYLIST
         Playlist playlist;
         String currentPlaylist = playlistRepository.getCurrentPlaylistName();
-        if (currentPlaylist == null
-                || currentPlaylist.equals(App.getInstance().getResources().getString(R.string.all_songs_playlist_name))) {
-            playlist = new Playlist("All songs");
-            List<Song> songs = songRepository.getAllSongs();
-            playlist.songsId.add(songs.get(0).id);
+        if (currentPlaylist == null) {
+            playlist = playlistRepository.findPlaylistByName(App.getInstance().getString(R.string.all_songs_playlist_name));
         } else {
             playlist = playlistRepository.findPlaylistByName(currentPlaylist);
         }
@@ -81,12 +124,11 @@ public class PlayerInteractorImpl implements
 
     @Override
     public void loadLatestPlayedSong() {
-        long currentSongId = songRepository.getCurrentSongId();
+        long currentSongId = playlistRepository.getSongPositionInPlaylistById(playlist, songRepository.getCurrentSongId());
         if (currentSongId == -1) {
             setCurrentSongPosition(0);
         } else {
-            setCurrentSongPosition(
-                    playlistRepository.getSongPositionInPlaylistById(playlist, currentSongId));
+            setCurrentSongPosition((int) currentSongId);
         }
     }
 
@@ -96,13 +138,22 @@ public class PlayerInteractorImpl implements
             mediaPlayerRepository.pause();
         } else {
             if (mediaPlayerRepository.getCurrentSongTimePlayed() > getCurrentSong().duration) {
-                mediaPlayerRepository.play(songRepository.getSongUri(getCurrentSong().id));
+                playCurrentSong();
             } else {
                 mediaPlayerRepository.unPause();
             }
         }
 
+        playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
+        Log.d("Play", "Same Song");
         songRepository.setCurrentSongId(getCurrentSong().id);
+    }
+
+    @Override
+    public void playCurrentSong() throws IOException {
+        Log.d("Play", "Change song");
+        playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
+        mediaPlayerRepository.play(songRepository.getSongUri(getCurrentSong().id));
     }
 
     @Override
@@ -115,7 +166,7 @@ public class PlayerInteractorImpl implements
             songPosInPlaylist = 0;
         }
 
-        play();
+        playCurrentSong();
     }
 
     @Override
@@ -128,7 +179,7 @@ public class PlayerInteractorImpl implements
             songPosInPlaylist = playlist.songsId.size() - 1;
         }
 
-        play();
+        playCurrentSong();
     }
 
     @Override
@@ -138,6 +189,8 @@ public class PlayerInteractorImpl implements
 
     @Override
     public void stop() {
+        stopPlaybackService();
+
         mediaPlayerRepository.release();
     }
 

@@ -14,8 +14,6 @@ public interface AllPlaylistInteractor {
 
     void deletePlaylist(String name);
 
-    void updateDefaultPlaylist();
-
     boolean isPlaylistDefault(String playlistName);
 
     void renamePlaylist(String oldName, String newName);

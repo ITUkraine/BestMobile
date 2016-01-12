@@ -33,7 +33,6 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
         this.allPlaylistInteractor = new AllPlaylistInteractorImpl();
         this.playerInteractor = new PlayerInteractorImpl();
 
-        allPlaylistInteractor.updateDefaultPlaylist();
         playlists = allPlaylistInteractor.getAllPlaylists();
 
         mAdapter = new PlaylistAdapter(playlists);
