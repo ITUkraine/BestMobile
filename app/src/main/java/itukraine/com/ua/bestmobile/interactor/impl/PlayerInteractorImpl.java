@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.async.SendProgressUpdateBroadcastAsync;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
@@ -30,7 +31,8 @@ import itukraine.com.ua.bestmobile.util.TimeUtil;
 public class PlayerInteractorImpl implements
         PlayerInteractor,
         MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnPreparedListener {
 
     private SongRepository songRepository;
     private PlaylistRepository playlistRepository;
@@ -38,6 +40,8 @@ public class PlayerInteractorImpl implements
 
     private Playlist playlist;
     private int songPosInPlaylist;
+
+    private SendProgressUpdateBroadcastAsync progressUpdateBroadcastAsync;
 
     private Intent mPlayIntent;
     private PlaybackService playbackService;
@@ -59,7 +63,7 @@ public class PlayerInteractorImpl implements
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
 
         mediaPlayerRepository = MediaPlayerRepositoryImpl.getInstance();
-        mediaPlayerRepository.setListeners(this, this);
+        mediaPlayerRepository.setListeners(this, this, this);
 
         updateDefaultPlaylist();
 
@@ -245,7 +249,14 @@ public class PlayerInteractorImpl implements
     }
 
     @Override
+    public int getCurrentSongTotalDuration() {
+        return getCurrentSong().duration;
+    }
+
+    @Override
     public void onCompletion(MediaPlayer mp) {
+//        progressUpdateBroadcastAsync.cancel(true);
+
         try {
             next();
         } catch (IOException e) {
@@ -260,5 +271,13 @@ public class PlayerInteractorImpl implements
 
     private Song getCurrentSong() {
         return songRepository.getSongByID(playlist.songsId.get(songPosInPlaylist));
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mediaPlayerRepository.start(mp);
+
+        progressUpdateBroadcastAsync = new SendProgressUpdateBroadcastAsync();
+        progressUpdateBroadcastAsync.execute();
     }
 }

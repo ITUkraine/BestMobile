@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
+import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
@@ -25,8 +26,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     private BroadcastReceiver receiverProgressUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean progressUpdate = intent.getBooleanExtra(PlaybackService.EXTRA_INFO_CHANGED, false);
-            if (progressUpdate) {
+            if (playerInteractor.isPlaying()) {
                 updateSongProgress();
             }
         }
@@ -35,7 +35,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     private BroadcastReceiver receiverInfoUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateNavigationHeaderSongInfo();
+            updateSongInfo();
         }
     };
 
@@ -46,15 +46,6 @@ public class PlayerPresenterImpl implements PlayerPresenter {
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
                 new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
-    }
-
-    public void updateNavigationHeaderSongInfo() {
-        playerView.setSongInfo(
-                playerInteractor.getCurrentSongArtist(),
-                playerInteractor.getCurrentSongTitle(),
-                playerInteractor.getCurrentSongFormatTotalDuration());
-
-        playerView.setAlbumImage(playerInteractor.getCurrentSongAlbumArt());
     }
 
     @Override
@@ -96,18 +87,25 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         playerView.setSongInfo(
                 playerInteractor.getCurrentSongArtist(),
                 playerInteractor.getCurrentSongTitle(),
-                playerInteractor.getCurrentSongFormatTotalDuration());
+                playerInteractor.getCurrentSongFormatTotalDuration(),
+                playerInteractor.getCurrentSongTotalDuration());
 
         Bitmap songAlbumArt = playerInteractor.getCurrentSongAlbumArt();
         playerView.setAlbumImage(songAlbumArt);
+
+        playerView.setCurrentSongPlayedDuration(
+                playerInteractor.getCurrentSongFormatPlayedDuration(),
+                playerInteractor.getCurrentSongPlayedDuration());
+
 
         updatePlayButton();
     }
 
     @Override
     public void updateSongProgress() {
-        playerView.setTextCurrentSongPlayedDuration(playerInteractor.getCurrentSongFormatPlayedDuration());
-        playerView.setSeekerCurrentSongDuration(playerInteractor.getCurrentSongPlayedDuration());
+        playerView.setCurrentSongPlayedDuration(
+                playerInteractor.getCurrentSongFormatPlayedDuration(),
+                playerInteractor.getCurrentSongPlayedDuration());
     }
 
     @Override
@@ -124,7 +122,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         updateSongInfo();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverProgressUpdate,
-                new IntentFilter(PlaybackService.PLAYBACK_PROGRESS_UPDATE));
+                new IntentFilter(Constants.SONG_PROGRESS_UPDATE));
     }
 
     @Override

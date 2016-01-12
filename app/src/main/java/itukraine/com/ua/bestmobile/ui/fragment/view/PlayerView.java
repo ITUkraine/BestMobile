@@ -9,11 +9,9 @@ public interface PlayerView {
 
     void setAlbumImage(Bitmap bitmap);
 
-    void setSongInfo(String artist, String title, String duration);
+    void setSongInfo(String artist, String title, String strDuration, int intDuration);
 
     void setPlayButtonDrawable(@DrawableRes int drawableId);
 
-    void setTextCurrentSongPlayedDuration(String formattedTime);
-
-    void setSeekerCurrentSongDuration(int pos);
+    void setCurrentSongPlayedDuration(String formattedTime, int intTime);
 }

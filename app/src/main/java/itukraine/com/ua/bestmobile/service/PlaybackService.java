@@ -18,10 +18,7 @@ import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
 
 public class PlaybackService extends Service {
 
-    public static final String PLAYBACK_PROGRESS_UPDATE = PlaybackService.class.getCanonicalName() + "PROGRESS_UPDATE";
     public static final String PLAYBACK_INFO_UPDATE = PlaybackService.class.getCanonicalName() + "INFO_UPDATE";
-    public static final String EXTRA_PROGRESS = "EXTRA_PROGRESS";
-    public static final String EXTRA_INFO_CHANGED = "EXTRA_INFO_CHANGED";
     private final static String TAG = PlaybackService.class.getSimpleName();
     private final IBinder mPlaybackBinder = new PlaybackBinder();
     private final int NOTIFICATION_ID = 281215;
@@ -83,12 +80,6 @@ public class PlaybackService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void sendProgressUpdate() {
-        Intent updateIntent = new Intent(PLAYBACK_PROGRESS_UPDATE);
-        updateIntent.putExtra(EXTRA_PROGRESS, true);
-        broadcaster.sendBroadcast(updateIntent);
-    }
-
     public void sendInfoUpdate() {
         Intent updateIntent = new Intent(PLAYBACK_INFO_UPDATE);
         broadcaster.sendBroadcast(updateIntent);
@@ -117,7 +108,7 @@ public class PlaybackService extends Service {
                         e.printStackTrace();
                     }
                     if (MainActivity.isActive) {
-                        sendProgressUpdate();
+                        // sendProgressUpdate();
                     }
                 }
                 return null;

@@ -47,4 +47,6 @@ public interface PlayerInteractor {
     String getCurrentSongArtist();
 
     String getCurrentSongTitle();
+
+    int getCurrentSongTotalDuration();
 }

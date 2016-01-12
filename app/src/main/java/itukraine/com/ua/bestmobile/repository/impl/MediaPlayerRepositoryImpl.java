@@ -10,9 +10,7 @@ import java.io.IOException;
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.repository.MediaPlayerRepository;
 
-public class MediaPlayerRepositoryImpl implements
-        MediaPlayerRepository,
-        MediaPlayer.OnPreparedListener {
+public class MediaPlayerRepositoryImpl implements MediaPlayerRepository {
     private static MediaPlayerRepository instance;
     private static MediaPlayer mediaPlayer;
 
@@ -31,15 +29,6 @@ public class MediaPlayerRepositoryImpl implements
     public void initMusicPlayer() {
         mediaPlayer.setWakeMode(App.getInstance(), PowerManager.PARTIAL_WAKE_LOCK);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    }
-
-    public void setListeners(
-            MediaPlayer.OnErrorListener onErrorListener,
-            MediaPlayer.OnCompletionListener onCompletionListener) {
-        mediaPlayer.setOnCompletionListener(onCompletionListener);
-        mediaPlayer.setOnErrorListener(onErrorListener);
-
-        mediaPlayer.setOnPreparedListener(this);
     }
 
     @Override
@@ -89,7 +78,18 @@ public class MediaPlayerRepositoryImpl implements
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
-        mp.start();
+    public void start(MediaPlayer mediaPlayer) {
+        mediaPlayer.start();
+    }
+
+    @Override
+    public void setListeners(
+            MediaPlayer.OnErrorListener onErrorListener,
+            MediaPlayer.OnCompletionListener onCompletionListener,
+            MediaPlayer.OnPreparedListener onPreparedListener) {
+
+        mediaPlayer.setOnCompletionListener(onCompletionListener);
+        mediaPlayer.setOnErrorListener(onErrorListener);
+        mediaPlayer.setOnPreparedListener(onPreparedListener);
     }
 }

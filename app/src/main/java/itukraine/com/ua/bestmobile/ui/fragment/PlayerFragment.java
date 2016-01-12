@@ -32,8 +32,6 @@ public class PlayerFragment extends Fragment implements PlayerView {
     private TextView textCurrentTime;
     private TextView textTotalDuration;
 
-    private MainActivity activity;
-
     private PlayerPresenter playerPresenter;
 
     @Override
@@ -41,7 +39,7 @@ public class PlayerFragment extends Fragment implements PlayerView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
-        activity = (MainActivity) getActivity();
+        MainActivity activity = (MainActivity) getActivity();
         activity.getToolbar().setTitle(getResources().getString(R.string.app_name));
 
         initSongInfoViews(view);
@@ -74,7 +72,7 @@ public class PlayerFragment extends Fragment implements PlayerView {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setTextCurrentSongPlayedDuration(TimeUtil.getInstance().formatTime(progress));
+                setCurrentSongPlayedDuration(TimeUtil.getInstance().formatTime(progress), progress);
             }
 
             @Override
@@ -127,10 +125,11 @@ public class PlayerFragment extends Fragment implements PlayerView {
     }
 
     @Override
-    public void setSongInfo(String artist, String title, String duration) {
+    public void setSongInfo(String artist, String title, String strDuration, int intDuration) {
         textArtist.setText(artist);
         textSong.setText(title);
-        textTotalDuration.setText(duration);
+        textTotalDuration.setText(strDuration);
+        songProgressbar.setMax(intDuration);
     }
 
     @Override
@@ -139,13 +138,9 @@ public class PlayerFragment extends Fragment implements PlayerView {
     }
 
     @Override
-    public void setTextCurrentSongPlayedDuration(String formattedTime) {
+    public void setCurrentSongPlayedDuration(String formattedTime, int intTime) {
         textCurrentTime.setText(formattedTime);
-    }
-
-    @Override
-    public void setSeekerCurrentSongDuration(int pos) {
-        songProgressbar.setProgress(pos);
+        songProgressbar.setProgress(intTime);
     }
 
     @Override

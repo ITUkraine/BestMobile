@@ -22,7 +22,10 @@ public interface MediaPlayerRepository {
 
     void stop();
 
+    void start(MediaPlayer mediaPlayer);
+
     void setListeners(
             MediaPlayer.OnErrorListener onErrorListener,
-            MediaPlayer.OnCompletionListener onCompletionListener);
+            MediaPlayer.OnCompletionListener onCompletionListener,
+            MediaPlayer.OnPreparedListener onPreparedListener);
 }
