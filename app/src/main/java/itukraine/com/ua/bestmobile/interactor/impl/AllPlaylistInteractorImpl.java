@@ -42,4 +42,9 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
     public void renamePlaylist(String oldName, String newName) {
         playlistRepository.renamePlaylist(oldName, newName);
     }
+
+    @Override
+    public int getTotalTimeOfPlaylist(Playlist playlist) {
+        return playlistRepository.calculateTotalDuration(playlist);
+    }
 }

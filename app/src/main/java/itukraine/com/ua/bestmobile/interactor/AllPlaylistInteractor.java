@@ -17,4 +17,6 @@ public interface AllPlaylistInteractor {
     boolean isPlaylistDefault(String playlistName);
 
     void renamePlaylist(String oldName, String newName);
+
+    int getTotalTimeOfPlaylist(Playlist playlist);
 }

@@ -58,7 +58,7 @@ public class SongListPresenterImpl implements SongListPresenter {
     public void removeSongFromPlaylist(int positionInPlaylist) {
         currentPlaylist.songsId.remove(songList.get(positionInPlaylist).id);
 
-        currentPlaylist.totalTime = songListInteractor.calculateDurationOfPlaylist(currentPlaylist);
+        //currentPlaylist.totalTime = songListInteractor.calculateDurationOfPlaylist(currentPlaylist);
 
         songListInteractor.updatePlaylist(currentPlaylist);
 

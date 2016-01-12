@@ -15,8 +15,6 @@ public interface SongListInteractor {
 
     void updatePlaylist(Playlist playlist);
 
-    int calculateDurationOfPlaylist(Playlist playlist);
-
     void deletePlaylist(String playlistName);
 
     Bitmap getAlbumArt(Long albumId);

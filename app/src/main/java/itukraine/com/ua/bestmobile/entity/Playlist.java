@@ -11,8 +11,6 @@ public class Playlist {
 
     @DatabaseField(id = true)
     public String name;
-    @DatabaseField
-    public int totalTime;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     public ArrayList<Long> songsId = new ArrayList<>();
@@ -28,7 +26,6 @@ public class Playlist {
     public String toString() {
         return "Playlist{" +
                 "name='" + name + '\'' +
-                ", totalTime='" + totalTime + '\'' +
                 ", songsId=" + songsId +
                 '}';
     }

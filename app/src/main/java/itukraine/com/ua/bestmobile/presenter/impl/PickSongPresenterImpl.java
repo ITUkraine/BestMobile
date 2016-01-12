@@ -52,7 +52,7 @@ public class PickSongPresenterImpl implements PickSongPresenter {
         Playlist newPlaylist = new Playlist(this.playlistName);
         newPlaylist.songsId.clear();
         newPlaylist.songsId.addAll(mAdapter.selectedSongs);
-        newPlaylist.totalTime = pickSongInteractor.calculateDurationOfPlaylist(newPlaylist);
+        // newPlaylist.totalTime = pickSongInteractor.calculateDurationOfPlaylist(newPlaylist);
         pickSongInteractor.createOrUpdatePlaylist(newPlaylist);
     }
 

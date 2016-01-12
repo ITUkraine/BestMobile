@@ -39,11 +39,6 @@ public class SongListInteractorImpl implements SongListInteractor {
     }
 
     @Override
-    public int calculateDurationOfPlaylist(Playlist playlist) {
-        return playlistRepository.calculateTotalDuration(playlist);
-    }
-
-    @Override
     public void deletePlaylist(String playlistName) {
         playlistRepository.deletePlaylistByName(playlistName);
     }

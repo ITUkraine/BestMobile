@@ -96,7 +96,7 @@ public class PlayerInteractorImpl implements
         Playlist defaultPlaylist = new Playlist(App.getInstance().getResources().getString(R.string.all_songs_playlist_name));
         for (Song song : songRepository.getAllSongs()) {
             defaultPlaylist.songsId.add(song.id);
-            defaultPlaylist.totalTime += song.duration;
+            //defaultPlaylist.totalTime += song.duration;
         }
         playlistRepository.savePlaylist(defaultPlaylist);
     }

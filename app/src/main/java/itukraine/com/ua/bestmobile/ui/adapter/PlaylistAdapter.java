@@ -11,13 +11,18 @@ import java.util.List;
 
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
+import itukraine.com.ua.bestmobile.interactor.impl.AllPlaylistInteractorImpl;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 public class PlaylistAdapter extends FilterPlaylistAdapter<PlaylistAdapter.ViewHolder> {
 
+    private AllPlaylistInteractor allPlaylistInteractor;
+
     public PlaylistAdapter(List<Playlist> playlists) {
         allPlaylists = playlists;
         visiblePlaylists = playlists;
+        allPlaylistInteractor = new AllPlaylistInteractorImpl();
     }
 
     @Override
@@ -36,7 +41,7 @@ public class PlaylistAdapter extends FilterPlaylistAdapter<PlaylistAdapter.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mPlaylistName.setText(getItem(position).name);
-        holder.mPlaylistDuration.setText(TimeUtil.getInstance().formatTime(getItem(position).totalTime));
+        holder.mPlaylistDuration.setText(TimeUtil.getInstance().formatTime(allPlaylistInteractor.getTotalTimeOfPlaylist(getItem(position))));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
