@@ -83,15 +83,14 @@ public class PlaybackService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void sendProgressUpdate() {
+    public void sendProgressUpdate() {
         Intent updateIntent = new Intent(PLAYBACK_PROGRESS_UPDATE);
         updateIntent.putExtra(EXTRA_PROGRESS, true);
         broadcaster.sendBroadcast(updateIntent);
     }
 
-    private void sendInfoUpdate() {
+    public void sendInfoUpdate() {
         Intent updateIntent = new Intent(PLAYBACK_INFO_UPDATE);
-        updateIntent.putExtra(EXTRA_INFO_CHANGED, true);
         broadcaster.sendBroadcast(updateIntent);
     }
 

@@ -31,11 +31,8 @@ public class MainPresenterImpl implements MainPresenter {
     private BroadcastReceiver receiverInfoUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean infoUpdate = intent.getBooleanExtra(PlaybackService.EXTRA_INFO_CHANGED, false);
-            if (infoUpdate) {
-                updateNavigationHeaderSongInfo();
-                updateNavigationHeaderControls();
-            }
+            updateNavigationHeaderSongInfo();
+            updateNavigationHeaderControls();
         }
     };
 

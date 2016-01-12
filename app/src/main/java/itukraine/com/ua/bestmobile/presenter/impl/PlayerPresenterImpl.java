@@ -32,10 +32,29 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         }
     };
 
+    private BroadcastReceiver receiverInfoUpdate = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateNavigationHeaderSongInfo();
+        }
+    };
+
     public PlayerPresenterImpl(PlayerView view) {
         this.playerView = view;
 
         playerInteractor = new PlayerInteractorImpl();
+
+        LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
+                new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
+    }
+
+    public void updateNavigationHeaderSongInfo() {
+        playerView.setSongInfo(
+                playerInteractor.getCurrentSongArtist(),
+                playerInteractor.getCurrentSongTitle(),
+                playerInteractor.getCurrentSongFormatTotalDuration());
+
+        playerView.setAlbumImage(playerInteractor.getCurrentSongAlbumArt());
     }
 
     @Override
@@ -111,6 +130,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(App.getInstance()).unregisterReceiver(receiverProgressUpdate);
+        LocalBroadcastManager.getInstance(App.getInstance()).unregisterReceiver(receiverInfoUpdate);
     }
 
     @Override

@@ -168,6 +168,8 @@ public class PlayerInteractorImpl implements
         }
 
         playCurrentSong();
+
+        playbackService.sendInfoUpdate();
     }
 
     @Override
@@ -181,6 +183,8 @@ public class PlayerInteractorImpl implements
         }
 
         playCurrentSong();
+
+        playbackService.sendInfoUpdate();
     }
 
     @Override
