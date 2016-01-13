@@ -63,6 +63,8 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     public void onNextButtonPressed() {
         playerView.clearDurationProgress();
 
+        playerView.setPlayButtonDrawable(R.drawable.ic_pause);
+
         try {
             playerInteractor.next();
         } catch (IOException e) {
@@ -73,6 +75,8 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     @Override
     public void onPreviousButtonPressed() {
         playerView.clearDurationProgress();
+
+        playerView.setPlayButtonDrawable(R.drawable.ic_pause);
 
         try {
             playerInteractor.previous();
@@ -93,8 +97,6 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         playerView.setAlbumImage(songAlbumArt);
 
         playerView.clearDurationProgress();
-
-        updatePlayButton();
     }
 
     @Override
@@ -104,7 +106,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
 
     @Override
     public void updatePlayButton() {
-        if (playerInteractor.isPlaying()) {
+        if (!playerInteractor.isPlaying()) {
             playerView.setPlayButtonDrawable(R.drawable.ic_pause);
         } else {
             playerView.setPlayButtonDrawable(R.drawable.ic_play);
@@ -113,8 +115,6 @@ public class PlayerPresenterImpl implements PlayerPresenter {
 
     @Override
     public void onCreate() {
-        updateSongInfo();
-
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverProgressUpdate,
                 new IntentFilter(Constants.SONG_PROGRESS_UPDATE));
     }
