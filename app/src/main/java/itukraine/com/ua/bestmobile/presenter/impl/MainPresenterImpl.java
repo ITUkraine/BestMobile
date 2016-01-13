@@ -34,7 +34,6 @@ public class MainPresenterImpl implements MainPresenter {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateNavigationHeaderSongInfo();
-            updateNavigationHeaderControls();
         }
     };
 
@@ -58,7 +57,7 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void updateNavigationHeaderControls() {
-        if (playerInteractor.isPlaying()) {
+        if (!playerInteractor.isPlaying()) {
             mainView.setNavigationHeaderPlayButtonDrawable(android.R.drawable.ic_media_pause);
         } else {
             mainView.setNavigationHeaderPlayButtonDrawable(android.R.drawable.ic_media_play);
@@ -89,6 +88,8 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void onHeaderPreviousButtonPressed() {
+        mainView.setNavigationHeaderPlayButtonDrawable(android.R.drawable.ic_media_pause);
+
         try {
             playerInteractor.previous();
         } catch (IOException e) {
@@ -98,6 +99,8 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void onHeaderNextButtonPressed() {
+        mainView.setNavigationHeaderPlayButtonDrawable(android.R.drawable.ic_media_pause);
+
         try {
             playerInteractor.next();
         } catch (IOException e) {
