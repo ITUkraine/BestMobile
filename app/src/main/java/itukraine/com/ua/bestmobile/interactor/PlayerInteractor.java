@@ -38,10 +38,6 @@ public interface PlayerInteractor {
 
     Bitmap getCurrentSongAlbumArt();
 
-    String getCurrentSongFormatTotalDuration();
-
-    String getCurrentSongFormatPlayedDuration();
-
     int getCurrentSongPlayedDuration();
 
     String getCurrentSongArtist();

@@ -26,7 +26,6 @@ import itukraine.com.ua.bestmobile.repository.impl.PlaylistRepositoryImpl;
 import itukraine.com.ua.bestmobile.repository.impl.SongRepositoryImpl;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
-import itukraine.com.ua.bestmobile.util.TimeUtil;
 
 public class PlayerInteractorImpl implements
         PlayerInteractor,
@@ -221,16 +220,6 @@ public class PlayerInteractorImpl implements
     @Override
     public Bitmap getCurrentSongAlbumArt() {
         return getAlbumArt(getCurrentSong().albumId);
-    }
-
-    @Override
-    public String getCurrentSongFormatTotalDuration() {
-        return TimeUtil.getInstance().formatTime(getCurrentSong().duration);
-    }
-
-    @Override
-    public String getCurrentSongFormatPlayedDuration() {
-        return TimeUtil.getInstance().formatTime(mediaPlayerRepository.getCurrentSongTimePlayed());
     }
 
     @Override

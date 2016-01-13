@@ -39,6 +39,7 @@ public class PlayerFragment extends Fragment implements PlayerView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
+        // TODO інтерфейс
         MainActivity activity = (MainActivity) getActivity();
         activity.getToolbar().setTitle(getResources().getString(R.string.app_name));
 
@@ -72,7 +73,7 @@ public class PlayerFragment extends Fragment implements PlayerView {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setCurrentSongPlayedDuration(TimeUtil.getInstance().formatTime(progress), progress);
+                setCurrentSongPlayedDuration(progress);
             }
 
             @Override
@@ -125,11 +126,11 @@ public class PlayerFragment extends Fragment implements PlayerView {
     }
 
     @Override
-    public void setSongInfo(String artist, String title, String strDuration, int intDuration) {
+    public void setSongInfo(String artist, String title, int time) {
         textArtist.setText(artist);
         textSong.setText(title);
-        textTotalDuration.setText(strDuration);
-        songProgressbar.setMax(intDuration);
+        textTotalDuration.setText(TimeUtil.getInstance().formatTime(time));
+        songProgressbar.setMax(time);
     }
 
     @Override
@@ -138,9 +139,9 @@ public class PlayerFragment extends Fragment implements PlayerView {
     }
 
     @Override
-    public void setCurrentSongPlayedDuration(String formattedTime, int intTime) {
-        textCurrentTime.setText(formattedTime);
-        songProgressbar.setProgress(intTime);
+    public void setCurrentSongPlayedDuration(int time) {
+        textCurrentTime.setText(TimeUtil.getInstance().formatTime(time));
+        songProgressbar.setProgress(time);
     }
 
     @Override

@@ -87,15 +87,12 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         playerView.setSongInfo(
                 playerInteractor.getCurrentSongArtist(),
                 playerInteractor.getCurrentSongTitle(),
-                playerInteractor.getCurrentSongFormatTotalDuration(),
                 playerInteractor.getCurrentSongTotalDuration());
 
         Bitmap songAlbumArt = playerInteractor.getCurrentSongAlbumArt();
         playerView.setAlbumImage(songAlbumArt);
 
-        playerView.setCurrentSongPlayedDuration(
-                playerInteractor.getCurrentSongFormatPlayedDuration(),
-                playerInteractor.getCurrentSongPlayedDuration());
+        playerView.setCurrentSongPlayedDuration(playerInteractor.getCurrentSongPlayedDuration());
 
 
         updatePlayButton();
@@ -103,9 +100,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
 
     @Override
     public void updateSongProgress() {
-        playerView.setCurrentSongPlayedDuration(
-                playerInteractor.getCurrentSongFormatPlayedDuration(),
-                playerInteractor.getCurrentSongPlayedDuration());
+        playerView.setCurrentSongPlayedDuration(playerInteractor.getCurrentSongPlayedDuration());
     }
 
     @Override
