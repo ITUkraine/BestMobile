@@ -14,4 +14,7 @@ public interface SongListView {
 
     void displayButtonAddSongsToPlaylist(boolean isDisplayed);
 
+    String getSearchQuery();
+
+    void displayClearSearchButton(boolean isDisplayed);
 }

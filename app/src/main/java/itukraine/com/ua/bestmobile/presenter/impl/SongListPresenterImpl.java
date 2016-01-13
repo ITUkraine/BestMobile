@@ -1,10 +1,8 @@
 package itukraine.com.ua.bestmobile.presenter.impl;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.App;
@@ -32,7 +30,6 @@ public class SongListPresenterImpl implements SongListPresenter {
 
     private Playlist currentPlaylist;
     private List<Song> songList;
-    private HashMap<Long, Bitmap> albumsArt;
 
     public SongListPresenterImpl(SongListView songListView, String playlistName) {
         this.songListView = songListView;
@@ -105,5 +102,12 @@ public class SongListPresenterImpl implements SongListPresenter {
         bundle.putBoolean(Constants.PLAYLIST_IS_NEW, false);
         pickSongFragment.setArguments(bundle);
         songListView.openFragmentWithBackStack(pickSongFragment);
+    }
+
+    @Override
+    public void filterSongs() {
+        String query = songListView.getSearchQuery();
+        mAdapter.setFilter(query);
+        songListView.displayClearSearchButton(query.length() > 0);
     }
 }
