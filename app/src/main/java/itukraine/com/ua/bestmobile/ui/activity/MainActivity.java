@@ -19,6 +19,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.MainPresenterImpl;
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private MainPresenter mainPresenter;
 
+    private Map<Integer, Fragment> fragmentMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
         initNavigationDrawer();
         initNavigationHeaderControls();
+        initNavigationMap();
 
         mainPresenter = new MainPresenterImpl(this);
     }
@@ -140,17 +146,18 @@ public class MainActivity extends AppCompatActivity implements
 
         clearBackStack();
 
-        if (id == R.id.nav_playback) {
-            openFragment(new PlayerFragment());
-        } else if (id == R.id.nav_playlist) {
-            openFragment(new AllPlaylistsFragment());
-        } else if (id == R.id.nav_feedback) {
-            openFragment(new FeedbackFragment());
-        }
+        openFragment(fragmentMap.get(id));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void initNavigationMap() {
+        fragmentMap = new HashMap<>();
+        fragmentMap.put(R.id.nav_playback, new PlayerFragment());
+        fragmentMap.put(R.id.nav_playlist, new AllPlaylistsFragment());
+        fragmentMap.put(R.id.nav_feedback, new FeedbackFragment());
     }
 
     /**
