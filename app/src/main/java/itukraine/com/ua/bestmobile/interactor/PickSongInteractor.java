@@ -1,7 +1,5 @@
 package itukraine.com.ua.bestmobile.interactor;
 
-import android.graphics.Bitmap;
-
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Playlist;
@@ -13,9 +11,6 @@ public interface PickSongInteractor {
 
     List<Song> getAllSongs();
 
-    int calculateDurationOfPlaylist(Playlist playlist);
-
     void createOrUpdatePlaylist(Playlist playlist);
 
-    Bitmap getAlbumArt(Long albumId);
 }
