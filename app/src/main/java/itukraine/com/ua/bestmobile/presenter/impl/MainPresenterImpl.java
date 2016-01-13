@@ -52,7 +52,7 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(App.getInstance()).unregisterReceiver(receiverInfoUpdate);
-
+        playerInteractor.stop();
         mainView = null;
     }
 
