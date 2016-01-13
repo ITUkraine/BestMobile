@@ -92,8 +92,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         Bitmap songAlbumArt = playerInteractor.getCurrentSongAlbumArt();
         playerView.setAlbumImage(songAlbumArt);
 
-        playerView.setCurrentSongPlayedDuration(playerInteractor.getCurrentSongPlayedDuration());
-
+        playerView.clearDurationProgress();
 
         updatePlayButton();
     }

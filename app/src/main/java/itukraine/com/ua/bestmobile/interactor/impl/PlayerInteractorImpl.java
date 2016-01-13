@@ -170,9 +170,11 @@ public class PlayerInteractorImpl implements
             songPosInPlaylist = 0;
         }
 
-        playCurrentSong();
+        if (playbackService != null) {
+            playCurrentSong();
 
-        playbackService.sendInfoUpdate();
+            playbackService.sendInfoUpdate();
+        }
     }
 
     @Override

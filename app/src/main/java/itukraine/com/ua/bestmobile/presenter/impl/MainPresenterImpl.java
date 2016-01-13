@@ -22,6 +22,7 @@ import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
+import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
 import itukraine.com.ua.bestmobile.util.ImageUtil;
 
 public class MainPresenterImpl implements MainPresenter {
@@ -49,6 +50,8 @@ public class MainPresenterImpl implements MainPresenter {
 
 
         // TODO OPEN "PlayerFragment"
+
+        mainView.openFragment(new PlayerFragment());
     }
 
     @Override
