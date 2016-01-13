@@ -33,15 +33,13 @@ public class PlayerInteractorImpl implements
         MediaPlayer.OnCompletionListener,
         MediaPlayer.OnPreparedListener {
 
+    private static PlayerInteractorImpl instance;
     private SongRepository songRepository;
     private PlaylistRepository playlistRepository;
     private MediaPlayerRepository mediaPlayerRepository;
-
     private Playlist playlist;
     private int songPosInPlaylist;
-
     private SendProgressUpdateBroadcastAsync progressUpdateBroadcastAsync;
-
     private Intent mPlayIntent;
     private PlaybackService playbackService;
     private ServiceConnection playbackConnection = new ServiceConnection() {
@@ -57,7 +55,7 @@ public class PlayerInteractorImpl implements
         }
     };
 
-    public PlayerInteractorImpl() {
+    private PlayerInteractorImpl() {
         songRepository = new SongRepositoryImpl(App.getInstance());
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
 
@@ -70,6 +68,13 @@ public class PlayerInteractorImpl implements
         loadLatestPlayedSong();
 
         startPlaybackService();
+    }
+
+    public static PlayerInteractorImpl getInstance() {
+        if (instance == null) {
+            instance = new PlayerInteractorImpl();
+        }
+        return instance;
     }
 
     private void startPlaybackService() {
@@ -211,6 +216,7 @@ public class PlayerInteractorImpl implements
 
     @Override
     public Bitmap getAlbumArt(long songAlbumId) {
+        Log.d("Album art", "Try to get album art for " + songAlbumId);
         Bitmap bitmap = songRepository.getAlbumArt(songAlbumId);
         if (bitmap == null) {
             bitmap = BitmapFactory.decodeResource(App.getInstance().getResources(),

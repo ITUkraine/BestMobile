@@ -14,7 +14,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
-import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.AllPlaylistInteractorImpl;
@@ -23,7 +22,6 @@ import itukraine.com.ua.bestmobile.presenter.MainPresenter;
 import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
-import itukraine.com.ua.bestmobile.util.ImageUtil;
 
 public class MainPresenterImpl implements MainPresenter {
 
@@ -42,14 +40,11 @@ public class MainPresenterImpl implements MainPresenter {
 
     public MainPresenterImpl(MainView view) {
         this.mainView = view;
-        playerInteractor = new PlayerInteractorImpl();
+        playerInteractor = PlayerInteractorImpl.getInstance();
         allPlaylistInteractor = new AllPlaylistInteractorImpl();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
                 new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
-
-
-        // TODO OPEN "PlayerFragment"
 
         mainView.openFragment(new PlayerFragment());
     }
@@ -74,15 +69,10 @@ public class MainPresenterImpl implements MainPresenter {
     public void updateNavigationHeaderSongInfo() {
         Drawable art;
         Bitmap bitmap = playerInteractor.getCurrentSongAlbumArt();
-        if (bitmap == null) {
-            art = App.getInstance().getResources().getDrawable(R.drawable.default_song_picture);
-        } else {
-            art = new BitmapDrawable(
-                    App.getInstance().getResources(),
-                    ImageUtil.getInstance().getScaledBitmap1to1(App.getInstance(), bitmap));
-        }
 
+        art = new BitmapDrawable(App.getInstance().getResources(), bitmap);
         art.setColorFilter(Color.argb(50, 155, 155, 155), PorterDuff.Mode.SRC_ATOP);
+
         mainView.setNavigationHeaderBackgroundDrawable(art);
     }
 

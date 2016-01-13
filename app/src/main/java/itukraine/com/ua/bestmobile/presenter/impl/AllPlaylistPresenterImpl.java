@@ -22,16 +22,14 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
     private AllPlaylistInteractor allPlaylistInteractor;
     private PlayerInteractor playerInteractor;
 
-    private List<Playlist> playlists;
-
     private PlaylistAdapter mAdapter;
 
     public AllPlaylistPresenterImpl(AllPlaylistView allPlaylistView) {
         this.allPlaylistView = allPlaylistView;
         this.allPlaylistInteractor = new AllPlaylistInteractorImpl();
-        this.playerInteractor = new PlayerInteractorImpl();
+        this.playerInteractor = PlayerInteractorImpl.getInstance();
 
-        playlists = allPlaylistInteractor.getAllPlaylists();
+        List<Playlist> playlists = allPlaylistInteractor.getAllPlaylists();
 
         mAdapter = new PlaylistAdapter(playlists);
         allPlaylistView.setAdapter(mAdapter);

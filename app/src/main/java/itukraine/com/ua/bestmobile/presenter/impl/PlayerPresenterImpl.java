@@ -42,7 +42,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     public PlayerPresenterImpl(PlayerView view) {
         this.playerView = view;
 
-        playerInteractor = new PlayerInteractorImpl();
+        playerInteractor = PlayerInteractorImpl.getInstance();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
                 new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));

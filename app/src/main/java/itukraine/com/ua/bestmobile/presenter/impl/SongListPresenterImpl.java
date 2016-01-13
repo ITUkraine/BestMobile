@@ -29,12 +29,11 @@ public class SongListPresenterImpl implements SongListPresenter {
     private SongAdapter mAdapter;
 
     private Playlist currentPlaylist;
-    private List<Song> songList;
 
     public SongListPresenterImpl(SongListView songListView, String playlistName) {
         this.songListView = songListView;
         this.songListInteractor = new SongListInteractorImpl();
-        this.playerInteractor = new PlayerInteractorImpl();
+        this.playerInteractor = PlayerInteractorImpl.getInstance();
 
         currentPlaylist = songListInteractor.getPlaylist(playlistName);
     }
@@ -42,7 +41,7 @@ public class SongListPresenterImpl implements SongListPresenter {
 
     @Override
     public void onResume() {
-        songList = songListInteractor.getSongsFromPlaylist(currentPlaylist);
+        List<Song> songList = songListInteractor.getSongsFromPlaylist(currentPlaylist);
         mAdapter = new SongAdapter(songList);
         songListView.setAdapter(mAdapter);
 
