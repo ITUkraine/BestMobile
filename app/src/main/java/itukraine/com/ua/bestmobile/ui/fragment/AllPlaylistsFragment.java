@@ -33,15 +33,13 @@ import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
+public class AllPlaylistsFragment extends SearchFragment implements AllPlaylistView {
 
 
     private AllPlaylistPresenter allPlaylistPresenter;
 
     private RecyclerView mRecyclerView;
 
-    private EditText editSearch;
-    private ImageView imageClearSearch;
     private FloatingActionButton addPlaylistButton;
 
     private Context mContext;
@@ -70,21 +68,6 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
     @Override
     public void setAdapter(PlaylistAdapter adapter) {
         mRecyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    public String getSearchQuery() {
-        return editSearch.getText().toString();
-    }
-
-    @Override
-    public void clearSearchQuery() {
-        editSearch.setText("");
-    }
-
-    @Override
-    public void displayClearSearchButton(boolean isDisplayed) {
-        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
     }
 
     @Override

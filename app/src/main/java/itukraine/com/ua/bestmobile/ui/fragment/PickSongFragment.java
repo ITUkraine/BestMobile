@@ -4,7 +4,6 @@ package itukraine.com.ua.bestmobile.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -26,12 +25,9 @@ import itukraine.com.ua.bestmobile.ui.fragment.view.PickSongView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
-public class PickSongFragment extends Fragment implements PickSongView {
+public class PickSongFragment extends SearchFragment implements PickSongView {
 
     private RecyclerView mRecyclerView;
-
-    private EditText editSearch;
-    private ImageView imageClearSearch;
 
     private Context mContext;
 
@@ -102,21 +98,6 @@ public class PickSongFragment extends Fragment implements PickSongView {
             public void afterTextChanged(Editable s) {
             }
         });
-    }
-
-    @Override
-    public void displayClearSearchButton(boolean isDisplayed) {
-        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public String getSearchQuery() {
-        return editSearch.getText().toString();
-    }
-
-    @Override
-    public void clearSearchQuery() {
-        editSearch.setText("");
     }
 
     @Override

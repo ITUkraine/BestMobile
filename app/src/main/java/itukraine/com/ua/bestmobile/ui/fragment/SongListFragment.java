@@ -27,13 +27,10 @@ import itukraine.com.ua.bestmobile.ui.fragment.view.SongListView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
 import itukraine.com.ua.bestmobile.view.RecyclerViewLineDevider;
 
-public class SongListFragment extends Fragment implements SongListView {
+public class SongListFragment extends SearchFragment implements SongListView {
 
     private RecyclerView mRecyclerView;
     private FloatingActionButton buttonAddSongsToPlaylist;
-
-    private EditText editSearch;
-    private ImageView imageClearSearch;
 
     private Context mContext;
     private MainActivity activity;
@@ -135,21 +132,6 @@ public class SongListFragment extends Fragment implements SongListView {
     @Override
     public void displayButtonAddSongsToPlaylist(boolean isDisplayed) {
         buttonAddSongsToPlaylist.setVisibility(isDisplayed ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    public String getSearchQuery() {
-        return editSearch.getText().toString();
-    }
-
-    @Override
-    public void displayClearSearchButton(boolean isDisplayed) {
-        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void clearSearchQuery() {
-        editSearch.setText("");
     }
 
     @Override
