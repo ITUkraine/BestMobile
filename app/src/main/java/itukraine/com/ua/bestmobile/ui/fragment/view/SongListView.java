@@ -17,4 +17,6 @@ public interface SongListView {
     String getSearchQuery();
 
     void displayClearSearchButton(boolean isDisplayed);
+
+    void clearSearchQuery();
 }

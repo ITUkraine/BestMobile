@@ -17,4 +17,6 @@ public interface SongListPresenter {
     void displayPickSongView();
 
     void filterSongs();
+
+    void clearFilter();
 }

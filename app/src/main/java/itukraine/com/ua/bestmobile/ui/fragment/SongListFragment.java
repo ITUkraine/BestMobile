@@ -70,9 +70,7 @@ public class SongListFragment extends Fragment implements SongListView {
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SongAdapter) mRecyclerView.getAdapter()).flushFilter();
-                imageClearSearch.setVisibility(View.GONE);
-                editSearch.setText("");
+                songListPresenter.clearFilter();
             }
         });
 
@@ -147,6 +145,11 @@ public class SongListFragment extends Fragment implements SongListView {
     @Override
     public void displayClearSearchButton(boolean isDisplayed) {
         imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void clearSearchQuery() {
+        editSearch.setText("");
     }
 
     @Override

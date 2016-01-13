@@ -110,4 +110,11 @@ public class SongListPresenterImpl implements SongListPresenter {
         mAdapter.setFilter(query);
         songListView.displayClearSearchButton(query.length() > 0);
     }
+
+    @Override
+    public void clearFilter() {
+        mAdapter.flushFilter();
+        songListView.displayClearSearchButton(false);
+        songListView.clearSearchQuery();
+    }
 }
