@@ -30,4 +30,8 @@ public class ImageUtil {
         return Bitmap.createScaledBitmap(source, newWidth, newWidth, true);
     }
 
+    public Bitmap getSpecificScaledBitmap1to1(Context context, Bitmap source, int size) {
+        return Bitmap.createScaledBitmap(source, size, size, true);
+    }
+
 }

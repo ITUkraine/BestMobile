@@ -5,11 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import itukraine.com.ua.bestmobile.R;
@@ -57,7 +59,7 @@ public class PlaybackService extends Service {
 
         // Set the info for the views that show in the notification panel.
         Notification notification = new Notification.Builder(this)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture))
+                .setLargeIcon(getScaledLargeIcon())
                 .setSmallIcon(smallIconId)
                 .setContentTitle(artist)  // the artist
                 .setContentText(title)  // the song title
@@ -71,6 +73,18 @@ public class PlaybackService extends Service {
 
     private void hideNotification() {
         mNM.cancel(NOTIFICATION_ID);
+    }
+
+    private Bitmap getScaledLargeIcon() {
+        DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+        float iconSize = 65 * metrics.density;
+        return Bitmap.createScaledBitmap(
+                BitmapFactory.decodeResource(
+                        getResources(),
+                        R.drawable.default_song_picture),
+                (int) iconSize,
+                (int) iconSize,
+                true);
     }
 
     @Override
