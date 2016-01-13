@@ -53,6 +53,8 @@ public class PlayerInteractorImpl implements
             playbackService = binder.getService();
 
             sendInfoUpdate();
+
+            playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
         }
 
         @Override
@@ -157,12 +159,16 @@ public class PlayerInteractorImpl implements
     public void play() throws IOException {
         if (mediaPlayerRepository.isPlaying()) {
             mediaPlayerRepository.pause();
+
+            playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_pause);
         } else {
             if (mediaPlayerRepository.getCurrentSongTimePlayed() > getCurrentSong().duration) {
                 playCurrentSong();
             } else {
                 mediaPlayerRepository.unPause();
             }
+
+            playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_play);
         }
 
         playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
@@ -175,6 +181,8 @@ public class PlayerInteractorImpl implements
         Log.d("Play", "Change song");
         playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
         mediaPlayerRepository.play(songRepository.getSongUri(getCurrentSong().id));
+
+        playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_play);
     }
 
     @Override

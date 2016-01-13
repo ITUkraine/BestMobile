@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -21,6 +22,11 @@ public class PlaybackService extends Service {
     private final int NOTIFICATION_ID = 281215;
 
     private NotificationManager mNM;
+
+    // NOTIFICATION CONTENT
+    private String artist;
+    private String title;
+    private int smallIconId;
 
     @Nullable
     @Override
@@ -40,17 +46,21 @@ public class PlaybackService extends Service {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
-    private void showNotification(String artist, String songTitle) {
+    private void showNotification() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
+        if (smallIconId == 0) {
+            smallIconId = android.R.drawable.ic_media_pause;
+        }
+
         // Set the info for the views that show in the notification panel.
         Notification notification = new Notification.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_song_picture))
-                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setSmallIcon(smallIconId)
                 .setContentTitle(artist)  // the artist
-                .setContentText(songTitle)  // the song title
+                .setContentText(title)  // the song title
                 .setContentIntent(contentIntent)// The intent to send when the entry is clicked
                 .setWhen(0)
                 .setOngoing(true) // user can't close notification
@@ -65,13 +75,22 @@ public class PlaybackService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        showNotification(null, null);
+        showNotification();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void setNotificationSongInfo(String artist, String songTitle) {
-        showNotification(artist, songTitle);
+        this.artist = artist;
+        this.title = songTitle;
+
+        showNotification();
+    }
+
+    public void setNotificationSmallIcon(@DrawableRes int iconId) {
+        this.smallIconId = iconId;
+
+        showNotification();
     }
 
     @Override
