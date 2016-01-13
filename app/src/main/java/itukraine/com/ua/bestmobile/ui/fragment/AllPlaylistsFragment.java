@@ -160,6 +160,8 @@ public class AllPlaylistsFragment extends SearchFragment implements AllPlaylistV
                 getActivity());
         builder.setTitle(isNewPlaylist ? mContext.getString(R.string.dlg_create_playlist) : mContext.getString(R.string.dlg_rename_playlist));
         final EditText input = new EditText(getActivity());
+        input.setText(allPlaylistPresenter.getOldPlaylistName(position));
+        input.setSelection(input.getText().length());
         builder.setPositiveButton(isNewPlaylist ? mContext.getString(R.string.btn_create_playlist) : mContext.getString(R.string.btn_rename_playlist), null);
         builder.setNegativeButton(mContext.getString(R.string.btn_cancel), null);
         builder.setView(input);
