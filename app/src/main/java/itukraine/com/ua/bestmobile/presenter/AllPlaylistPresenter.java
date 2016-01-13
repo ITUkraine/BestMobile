@@ -16,4 +16,6 @@ public interface AllPlaylistPresenter {
     boolean isPlaylistExist(String playlistName);
 
     void openSongListFragmentForSelectedPlaylist(int playlistPosition);
+
+    String getOldPlaylistName(Integer position);
 }

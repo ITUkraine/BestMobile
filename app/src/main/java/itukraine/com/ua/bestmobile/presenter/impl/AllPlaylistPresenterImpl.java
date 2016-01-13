@@ -98,4 +98,9 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
         allPlaylistView.openFragmentWithBackStack(songListFragment);
     }
 
+    @Override
+    public String getOldPlaylistName(Integer position) {
+        return mAdapter.visibleRows.get(position).name;
+    }
+
 }
