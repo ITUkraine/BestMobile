@@ -2,6 +2,7 @@ package itukraine.com.ua.bestmobile.interactor.impl;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 
 import java.util.ArrayList;
@@ -61,17 +62,25 @@ public class AllPlaylistInteractorImpl implements AllPlaylistInteractor {
 
     @Override
     public void updatePlaylists() {
-        scanMediaStore();
-        Iterator<Long> iterator;
-        for (Playlist playlist : playlistRepository.getPlaylists()) {
-            iterator = playlist.songsId.iterator();
-            while (iterator.hasNext()) {
-                if (!getIdOfExistingSongs().contains(iterator.next())) {
-                    iterator.remove();
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                scanMediaStore();
+                Iterator<Long> iterator;
+                for (Playlist playlist : playlistRepository.getPlaylists()) {
+                    iterator = playlist.songsId.iterator();
+                    while (iterator.hasNext()) {
+                        if (!getIdOfExistingSongs().contains(iterator.next())) {
+                            iterator.remove();
+                        }
+                    }
+                    playlistRepository.savePlaylist(playlist);
                 }
+                return null;
             }
-            playlistRepository.savePlaylist(playlist);
-        }
+        };
+
     }
 
     private void scanMediaStore() {
