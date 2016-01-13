@@ -15,4 +15,8 @@ public interface SongListPresenter {
     boolean isCurrentPlaylistDefault();
 
     void displayPickSongView();
+
+    void filterSongs();
+
+    void clearFilter();
 }

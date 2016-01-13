@@ -60,6 +60,8 @@ public class SongListFragment extends Fragment implements SongListView {
 
         initRecyclerView(view);
 
+        songListPresenter.onResume();
+
         return view;
     }
 
@@ -68,9 +70,7 @@ public class SongListFragment extends Fragment implements SongListView {
         imageClearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SongAdapter) mRecyclerView.getAdapter()).flushFilter();
-                imageClearSearch.setVisibility(View.GONE);
-                editSearch.setText("");
+                songListPresenter.clearFilter();
             }
         });
 
@@ -79,9 +79,7 @@ public class SongListFragment extends Fragment implements SongListView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = editSearch.getText().toString();
-                ((SongAdapter) mRecyclerView.getAdapter()).setFilter(query);
-                imageClearSearch.setVisibility(query.length() > 0 ? View.VISIBLE : View.GONE);
+                songListPresenter.filterSongs();
             }
 
             @Override
@@ -92,12 +90,6 @@ public class SongListFragment extends Fragment implements SongListView {
             public void afterTextChanged(Editable s) {
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        songListPresenter.onResume();
     }
 
     public void initButtonAddSongsToPlaylist(View view) {
@@ -143,6 +135,21 @@ public class SongListFragment extends Fragment implements SongListView {
     @Override
     public void displayButtonAddSongsToPlaylist(boolean isDisplayed) {
         buttonAddSongsToPlaylist.setVisibility(isDisplayed ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public String getSearchQuery() {
+        return editSearch.getText().toString();
+    }
+
+    @Override
+    public void displayClearSearchButton(boolean isDisplayed) {
+        imageClearSearch.setVisibility(isDisplayed ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void clearSearchQuery() {
+        editSearch.setText("");
     }
 
     @Override
