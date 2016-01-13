@@ -56,9 +56,9 @@ public class SongListPresenterImpl implements SongListPresenter {
 
     @Override
     public void removeSongFromPlaylist(int positionInPlaylist) {
-        currentPlaylist.songsId.remove(mAdapter.visibleSongs.get(positionInPlaylist).id);
-        mAdapter.allSongs.remove(mAdapter.visibleSongs.get(positionInPlaylist));
-        mAdapter.visibleSongs.remove(positionInPlaylist);
+        currentPlaylist.songsId.remove(mAdapter.visibleRows.get(positionInPlaylist).id);
+        mAdapter.allRows.remove(mAdapter.visibleRows.get(positionInPlaylist));
+        mAdapter.visibleRows.remove(positionInPlaylist);
 
         songListInteractor.updatePlaylist(currentPlaylist);
 
@@ -84,7 +84,7 @@ public class SongListPresenterImpl implements SongListPresenter {
     @Override
     public void playCurrentPlaylistFromPosition(int position) {
         playerInteractor.setPlaylist(currentPlaylist);
-        playerInteractor.setCurrentSongPosition(currentPlaylist.songsId.indexOf(mAdapter.visibleSongs.get(position).id));
+        playerInteractor.setCurrentSongPosition(currentPlaylist.songsId.indexOf(mAdapter.visibleRows.get(position).id));
         try {
             playerInteractor.play();
         } catch (IOException e) {

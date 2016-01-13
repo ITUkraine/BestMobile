@@ -20,8 +20,8 @@ public class PlaylistAdapter extends FilterPlaylistAdapter<PlaylistAdapter.ViewH
     private AllPlaylistInteractor allPlaylistInteractor;
 
     public PlaylistAdapter(List<Playlist> playlists) {
-        allPlaylists = playlists;
-        visiblePlaylists = playlists;
+        allRows = playlists;
+        visibleRows = playlists;
         allPlaylistInteractor = new AllPlaylistInteractorImpl();
     }
 

@@ -24,8 +24,8 @@ public class PickSongAdapter extends FilterSongAdapter<PickSongAdapter.ViewHolde
     private PickSongInteractor pickSongInteractor;
 
     public PickSongAdapter(List<Song> allSongs, Playlist playlist) {
-        this.allSongs = allSongs;
-        this.visibleSongs = allSongs;
+        allRows = allSongs;
+        visibleRows = allSongs;
         if (playlist != null) {
             selectedSongs = playlist.songsId;
         }

@@ -39,9 +39,9 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public void deletePlaylist(int pos) {
-        allPlaylistInteractor.deletePlaylist(mAdapter.visiblePlaylists.get(pos).name);
-        mAdapter.allPlaylists.remove(mAdapter.visiblePlaylists.get(pos));
-        mAdapter.visiblePlaylists.remove(pos);
+        allPlaylistInteractor.deletePlaylist(mAdapter.visibleRows.get(pos).name);
+        mAdapter.allRows.remove(mAdapter.visibleRows.get(pos));
+        mAdapter.visibleRows.remove(pos);
 
         mAdapter.notifyDataSetChanged();
     }
@@ -62,12 +62,12 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public boolean isPlaylistDefault(int positionInList) {
-        return allPlaylistInteractor.isPlaylistDefault(mAdapter.visiblePlaylists.get(positionInList).name);
+        return allPlaylistInteractor.isPlaylistDefault(mAdapter.visibleRows.get(positionInList).name);
     }
 
     @Override
     public void selectAndPlayPlaylist(int positionInList) {
-        playerInteractor.setPlaylist(mAdapter.visiblePlaylists.get(positionInList).name);
+        playerInteractor.setPlaylist(mAdapter.visibleRows.get(positionInList).name);
         try {
             playerInteractor.play();
         } catch (IOException e) {
@@ -77,11 +77,11 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
 
     @Override
     public void renamePlaylist(int positionOfOldPlaylist, String newName) {
-        String oldPlaylistName = mAdapter.visiblePlaylists.get(positionOfOldPlaylist).name;
+        String oldPlaylistName = mAdapter.visibleRows.get(positionOfOldPlaylist).name;
 
         allPlaylistInteractor.renamePlaylist(oldPlaylistName, newName);
 
-        mAdapter.visiblePlaylists.get(positionOfOldPlaylist).name = newName;
+        mAdapter.visibleRows.get(positionOfOldPlaylist).name = newName;
 
         mAdapter.notifyItemChanged(positionOfOldPlaylist);
     }
@@ -95,7 +95,7 @@ public class AllPlaylistPresenterImpl implements AllPlaylistPresenter {
     public void openSongListFragmentForSelectedPlaylist(int playlistPosition) {
         SongListFragment songListFragment = new SongListFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.PLAYLIST_NAME, mAdapter.visiblePlaylists.get(playlistPosition).name);
+        bundle.putString(Constants.PLAYLIST_NAME, mAdapter.visibleRows.get(playlistPosition).name);
         songListFragment.setArguments(bundle);
         allPlaylistView.openFragmentWithBackStack(songListFragment);
     }

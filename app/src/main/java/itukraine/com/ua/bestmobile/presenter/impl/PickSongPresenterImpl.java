@@ -68,10 +68,10 @@ public class PickSongPresenterImpl implements PickSongPresenter {
 
     @Override
     public void selectSongFromList(int position) {
-        if (!mAdapter.selectedSongs.contains(mAdapter.visibleSongs.get(position).id)) {
-            mAdapter.selectedSongs.add(mAdapter.visibleSongs.get(position).id);
+        if (!mAdapter.selectedSongs.contains(mAdapter.visibleRows.get(position).id)) {
+            mAdapter.selectedSongs.add(mAdapter.visibleRows.get(position).id);
         } else {
-            mAdapter.selectedSongs.remove(mAdapter.visibleSongs.get(position).id);
+            mAdapter.selectedSongs.remove(mAdapter.visibleRows.get(position).id);
         }
         mAdapter.notifyItemChanged(position);
     }

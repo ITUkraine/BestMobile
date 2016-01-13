@@ -19,8 +19,8 @@ public class SongAdapter extends FilterSongAdapter<SongAdapter.ViewHolder> {
     private SongListInteractorImpl songListInteractor;
 
     public SongAdapter(List<Song> songs) {
-        allSongs = songs;
-        visibleSongs = songs;
+        allRows = songs;
+        visibleRows = songs;
         songListInteractor = new SongListInteractorImpl();
     }
 
