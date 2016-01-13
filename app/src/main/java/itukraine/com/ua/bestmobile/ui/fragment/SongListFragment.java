@@ -171,7 +171,8 @@ public class SongListFragment extends Fragment implements SongListView {
 
     public void displayPossibleOperationForSongDialog(final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(R.array.song_action_array, new DialogInterface.OnClickListener() {
+        boolean isDefaultPlaylist = songListPresenter.isCurrentPlaylistDefault();
+        builder.setItems(isDefaultPlaylist ? R.array.play : R.array.song_action_array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
