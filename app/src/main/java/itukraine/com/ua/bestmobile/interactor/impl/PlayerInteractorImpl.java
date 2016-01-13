@@ -8,11 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
+import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.async.SendProgressUpdateBroadcastAsync;
 import itukraine.com.ua.bestmobile.entity.Playlist;
@@ -40,6 +42,7 @@ public class PlayerInteractorImpl implements
     private Playlist playlist;
     private int songPosInPlaylist;
     private SendProgressUpdateBroadcastAsync progressUpdateBroadcastAsync;
+    private LocalBroadcastManager broadcaster;
     private Intent mPlayIntent;
     private PlaybackService playbackService;
     private ServiceConnection playbackConnection = new ServiceConnection() {
@@ -48,6 +51,8 @@ public class PlayerInteractorImpl implements
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
             playbackService = binder.getService();
+
+            sendInfoUpdate();
         }
 
         @Override
@@ -58,6 +63,8 @@ public class PlayerInteractorImpl implements
     private PlayerInteractorImpl() {
         songRepository = new SongRepositoryImpl(App.getInstance());
         playlistRepository = new PlaylistRepositoryImpl(App.getInstance());
+
+        broadcaster = LocalBroadcastManager.getInstance(App.getInstance());
 
         mediaPlayerRepository = MediaPlayerRepositoryImpl.getInstance();
         mediaPlayerRepository.setListeners(this, this, this);
@@ -88,6 +95,11 @@ public class PlayerInteractorImpl implements
     private void stopPlaybackService() {
         App.getInstance().unbindService(playbackConnection);
         App.getInstance().stopService(mPlayIntent);
+    }
+
+    private void sendInfoUpdate() {
+        Intent updateIntent = new Intent(Constants.SONG_INFO_UPDATE);
+        broadcaster.sendBroadcast(updateIntent);
     }
 
     @Override
@@ -178,7 +190,7 @@ public class PlayerInteractorImpl implements
         if (playbackService != null) {
             playCurrentSong();
 
-            playbackService.sendInfoUpdate();
+            sendInfoUpdate();
         }
     }
 
@@ -194,7 +206,7 @@ public class PlayerInteractorImpl implements
 
         playCurrentSong();
 
-        playbackService.sendInfoUpdate();
+        sendInfoUpdate();
     }
 
     @Override

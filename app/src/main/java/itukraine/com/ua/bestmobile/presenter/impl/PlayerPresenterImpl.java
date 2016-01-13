@@ -15,7 +15,6 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.presenter.PlayerPresenter;
-import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.fragment.view.PlayerView;
 
 public class PlayerPresenterImpl implements PlayerPresenter {
@@ -45,7 +44,7 @@ public class PlayerPresenterImpl implements PlayerPresenter {
         playerInteractor = PlayerInteractorImpl.getInstance();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
-                new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
+                new IntentFilter(Constants.SONG_INFO_UPDATE));
     }
 
     @Override

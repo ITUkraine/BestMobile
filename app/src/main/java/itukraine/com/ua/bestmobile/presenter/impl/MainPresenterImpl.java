@@ -14,12 +14,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.App;
+import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.interactor.AllPlaylistInteractor;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.AllPlaylistInteractorImpl;
 import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.presenter.MainPresenter;
-import itukraine.com.ua.bestmobile.service.PlaybackService;
 import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.fragment.PlayerFragment;
 
@@ -44,7 +44,7 @@ public class MainPresenterImpl implements MainPresenter {
         allPlaylistInteractor = new AllPlaylistInteractorImpl();
 
         LocalBroadcastManager.getInstance(App.getInstance()).registerReceiver(receiverInfoUpdate,
-                new IntentFilter(PlaybackService.PLAYBACK_INFO_UPDATE));
+                new IntentFilter(Constants.SONG_INFO_UPDATE));
 
         mainView.openFragment(new PlayerFragment());
     }
