@@ -16,4 +16,6 @@ public interface MainView {
     void openFragment(Fragment fragment);
 
     void hideKeyboard(View view);
+
+    void setToolbarTitle(String title);
 }

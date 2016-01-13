@@ -45,10 +45,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private MainPresenter mainPresenter;
 
-    public Toolbar getToolbar() {
-        return mToolbar;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +196,11 @@ public class MainActivity extends AppCompatActivity implements
     public void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void setToolbarTitle(String title) {
+        mToolbar.setTitle(title);
     }
 
     /**

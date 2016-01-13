@@ -12,6 +12,7 @@ import android.widget.RatingBar;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.FeedbackPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.FeedbackPresenterImpl;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.fragment.view.FeedbackView;
 
 public class FeedbackFragment extends Fragment implements FeedbackView {
@@ -29,6 +30,8 @@ public class FeedbackFragment extends Fragment implements FeedbackView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feedback, container, false);
+
+        ((MainView) getActivity()).setToolbarTitle(getResources().getString(R.string.feedback));
 
         initFeedbackViews(view);
 

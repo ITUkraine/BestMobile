@@ -15,7 +15,7 @@ import android.widget.TextView;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.PlayerPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.PlayerPresenterImpl;
-import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.fragment.view.PlayerView;
 import itukraine.com.ua.bestmobile.util.TimeUtil;
 
@@ -39,9 +39,7 @@ public class PlayerFragment extends Fragment implements PlayerView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
-        // TODO інтерфейс
-        MainActivity activity = (MainActivity) getActivity();
-        activity.getToolbar().setTitle(getResources().getString(R.string.app_name));
+        ((MainView) getActivity()).setToolbarTitle(getResources().getString(R.string.app_name));
 
         initSongInfoViews(view);
         initPlaybackControlViews(view);

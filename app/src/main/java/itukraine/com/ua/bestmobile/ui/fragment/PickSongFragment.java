@@ -20,6 +20,7 @@ import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.PickSongPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.PickSongPresenterImpl;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.adapter.PickSongAdapter;
 import itukraine.com.ua.bestmobile.ui.fragment.view.PickSongView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -45,6 +46,8 @@ public class PickSongFragment extends Fragment implements PickSongView {
 
         Bundle bundle = this.getArguments();
         this.playlistName = bundle.getString(Constants.PLAYLIST_NAME);
+
+        ((MainView) getActivity()).setToolbarTitle(playlistName);
 
         initSearchViews(view);
 

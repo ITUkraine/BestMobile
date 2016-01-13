@@ -24,7 +24,7 @@ import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.AllPlaylistPresenterImpl;
-import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.adapter.PlaylistAdapter;
 import itukraine.com.ua.bestmobile.ui.fragment.view.AllPlaylistView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -51,8 +51,7 @@ public class AllPlaylistsFragment extends Fragment implements AllPlaylistView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_playlists, container, false);
 
-        MainActivity activity = (MainActivity) getActivity();
-        activity.getToolbar().setTitle(R.string.playlists);
+        ((MainView) getActivity()).setToolbarTitle(getResources().getString(R.string.playlists));
 
         imageClearSearch = (ImageView) view.findViewById(R.id.imageClearSearch);
         editSearch = (EditText) view.findViewById(R.id.editSearch);

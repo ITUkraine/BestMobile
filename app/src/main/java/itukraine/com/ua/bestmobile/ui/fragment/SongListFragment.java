@@ -21,6 +21,7 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.SongListPresenter;
 import itukraine.com.ua.bestmobile.presenter.impl.SongListPresenterImpl;
 import itukraine.com.ua.bestmobile.ui.activity.MainActivity;
+import itukraine.com.ua.bestmobile.ui.activity.view.MainView;
 import itukraine.com.ua.bestmobile.ui.adapter.SongAdapter;
 import itukraine.com.ua.bestmobile.ui.fragment.view.SongListView;
 import itukraine.com.ua.bestmobile.util.RecyclerItemClickListener;
@@ -48,7 +49,8 @@ public class SongListFragment extends Fragment implements SongListView {
         String playlistName = bundle.getString(Constants.PLAYLIST_NAME, null);
 
         activity = (MainActivity) getActivity();
-        activity.getToolbar().setTitle(playlistName);
+
+        ((MainView) getActivity()).setToolbarTitle(playlistName);
 
         songListPresenter = new SongListPresenterImpl(this, playlistName);
 
