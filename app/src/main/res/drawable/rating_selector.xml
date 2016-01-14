@@ -3,9 +3,9 @@
 
     <item
         android:id="@android:id/background"
-        android:drawable="@drawable/ic_star_gray" />
+        android:drawable="@drawable/ic_star_black" />
     <item
         android:id="@android:id/progress"
-        android:drawable="@drawable/ic_star_black" />
+        android:drawable="@drawable/ic_star_white" />
 
 </layer-list>
