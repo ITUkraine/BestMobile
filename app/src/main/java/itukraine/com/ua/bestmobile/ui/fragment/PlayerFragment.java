@@ -31,6 +31,8 @@ public class PlayerFragment extends Fragment implements PlayerView {
     private Button buttonPrevSong;
     private TextView textCurrentTime;
     private TextView textTotalDuration;
+    private Button buttonShuffleMode;
+    private Button buttonRepeatMode;
 
     private PlayerPresenter playerPresenter;
 
@@ -89,6 +91,8 @@ public class PlayerFragment extends Fragment implements PlayerView {
         buttonPlay = (Button) view.findViewById(R.id.button_play);
         buttonNextSong = (Button) view.findViewById(R.id.button_next_song);
         buttonPrevSong = (Button) view.findViewById(R.id.button_prev_song);
+        buttonShuffleMode = (Button) view.findViewById(R.id.button_shufle);
+        buttonRepeatMode = (Button) view.findViewById(R.id.button_repeat);
 
         buttonPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +112,20 @@ public class PlayerFragment extends Fragment implements PlayerView {
             @Override
             public void onClick(View v) {
                 playerPresenter.onPreviousButtonPressed();
+            }
+        });
+
+        buttonShuffleMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playerPresenter.onShuffleModePressed();
+            }
+        });
+
+        buttonRepeatMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playerPresenter.onRepeatModePressed();
             }
         });
     }
@@ -140,6 +158,16 @@ public class PlayerFragment extends Fragment implements PlayerView {
     public void setCurrentSongPlayedDuration(int time) {
         textCurrentTime.setText(TimeUtil.getInstance().formatTime(time));
         songProgressbar.setProgress(time);
+    }
+
+    @Override
+    public void setShuffleButtonDrawable(@DrawableRes int drawableId) {
+        buttonShuffleMode.setBackgroundResource(drawableId);
+    }
+
+    @Override
+    public void setRepeatButtonDrawable(@DrawableRes int drawableId) {
+        buttonRepeatMode.setBackgroundResource(drawableId);
     }
 
     @Override

@@ -12,6 +12,8 @@ import java.io.IOException;
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
+import itukraine.com.ua.bestmobile.enums.RepeatState;
+import itukraine.com.ua.bestmobile.enums.ShuffleState;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.interactor.impl.PlayerInteractorImpl;
 import itukraine.com.ua.bestmobile.presenter.PlayerPresenter;
@@ -127,5 +129,39 @@ public class PlayerPresenterImpl implements PlayerPresenter {
     @Override
     public void rewindTo(int pos) {
         playerInteractor.rewindTo(pos);
+    }
+
+    @Override
+    public void onShuffleModePressed() {
+        ShuffleState currentShuffleState = playerInteractor.getShuffleMode();
+        if (currentShuffleState == ShuffleState.SHUFFLE_OFF) {
+            playerView.setShuffleButtonDrawable(R.drawable.ic_shuffle_on);
+            playerInteractor.setShuffleMode(ShuffleState.SHUFFLE_ON);
+            playerInteractor.shufflePlaylist();
+        } else {
+            playerView.setShuffleButtonDrawable(R.drawable.ic_shuffle_off);
+            playerInteractor.setShuffleMode(ShuffleState.SHUFFLE_OFF);
+            playerInteractor.revertPlaylistToOriginal();
+        }
+
+    }
+
+    @Override
+    public void onRepeatModePressed() {
+        RepeatState currentRepeatState = playerInteractor.getRepeatMode();
+        switch (currentRepeatState) {
+            case REPEAT_OFF:
+                playerView.setRepeatButtonDrawable(R.drawable.ic_repeat_on);
+                playerInteractor.setRepeatMode(RepeatState.REPEAT_PLAYLIST);
+                break;
+            case REPEAT_PLAYLIST:
+                playerView.setRepeatButtonDrawable(R.drawable.ic_repeat_on_song);
+                playerInteractor.setRepeatMode(RepeatState.REPEAT_SONG);
+                break;
+            case REPEAT_SONG:
+                playerView.setRepeatButtonDrawable(R.drawable.ic_repeat_off);
+                playerInteractor.setRepeatMode(RepeatState.REPEAT_OFF);
+                break;
+        }
     }
 }

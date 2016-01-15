@@ -14,4 +14,8 @@ public interface PlayerView {
     void setPlayButtonDrawable(@DrawableRes int drawableId);
 
     void setCurrentSongPlayedDuration(int time);
+
+    void setShuffleButtonDrawable(@DrawableRes int drawableId);
+
+    void setRepeatButtonDrawable(@DrawableRes int drawableId);
 }

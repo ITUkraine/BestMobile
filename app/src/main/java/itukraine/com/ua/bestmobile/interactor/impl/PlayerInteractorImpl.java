@@ -12,6 +12,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import itukraine.com.ua.bestmobile.App;
 import itukraine.com.ua.bestmobile.Constants;
@@ -19,6 +21,8 @@ import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.async.SendProgressUpdateBroadcastAsync;
 import itukraine.com.ua.bestmobile.entity.Playlist;
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.enums.RepeatState;
+import itukraine.com.ua.bestmobile.enums.ShuffleState;
 import itukraine.com.ua.bestmobile.interactor.PlayerInteractor;
 import itukraine.com.ua.bestmobile.repository.MediaPlayerRepository;
 import itukraine.com.ua.bestmobile.repository.PlaylistRepository;
@@ -42,6 +46,7 @@ public class PlayerInteractorImpl implements
 
     private Playlist playlist;
     private int songPosInPlaylist;
+    private ArrayList<Long> originalSongsId;
 
     private SendProgressUpdateBroadcastAsync progressUpdateBroadcastAsync;
     private LocalBroadcastManager broadcaster;
@@ -64,6 +69,7 @@ public class PlayerInteractorImpl implements
         public void onServiceDisconnected(ComponentName name) {
         }
     };
+
 
     private PlayerInteractorImpl() {
         songRepository = new SongRepositoryImpl(App.getInstance());
@@ -114,6 +120,8 @@ public class PlayerInteractorImpl implements
         playlistRepository.setCurrentPlaylistName(playlist.name);
 
         songPosInPlaylist = 0;
+
+        originalSongsId = new ArrayList<>(playlist.songsId);
     }
 
     @Override
@@ -196,17 +204,35 @@ public class PlayerInteractorImpl implements
     @Override
     public void next() throws IOException {
         songPosInPlaylist++;
-
-        // TODO make logic for "repeat" functionality when go to the end of list,
-        // for now playback will begin from start
         if (songPosInPlaylist >= playlist.songsId.size()) {
             songPosInPlaylist = 0;
         }
+        playWithUpdate();
 
+    }
+
+    private void playWithUpdate() throws IOException {
         if (playbackService != null) {
             playCurrentSong();
 
             sendInfoUpdate();
+        }
+    }
+
+    private void prepareNextSong() throws IOException {
+        switch (getRepeatMode()) {
+            case REPEAT_OFF:
+                break;
+            case REPEAT_SONG:
+                playWithUpdate();
+                break;
+            case REPEAT_PLAYLIST:
+                songPosInPlaylist++;
+                if (songPosInPlaylist >= playlist.songsId.size()) {
+                    songPosInPlaylist = 0;
+                }
+                playWithUpdate();
+                break;
         }
     }
 
@@ -279,11 +305,41 @@ public class PlayerInteractorImpl implements
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
-//        progressUpdateBroadcastAsync.cancel(true);
+    public ShuffleState getShuffleMode() {
+        return songRepository.getShuffleMode();
+    }
 
+    @Override
+    public void setShuffleMode(ShuffleState state) {
+        songRepository.setShuffleMode(state);
+    }
+
+    @Override
+    public void shufflePlaylist() {
+        Collections.shuffle(playlist.songsId);
+    }
+
+    @Override
+    public void revertPlaylistToOriginal() {
+        playlist.songsId.clear();
+        playlist.songsId.addAll(originalSongsId);
+    }
+
+    @Override
+    public RepeatState getRepeatMode() {
+        return songRepository.getRepeatMode();
+    }
+
+    @Override
+    public void setRepeatMode(RepeatState repeatMode) {
+        songRepository.setRepeatMode(repeatMode);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        //progressUpdateBroadcastAsync.cancel(true);
         try {
-            next();
+            prepareNextSong();
         } catch (IOException e) {
             e.printStackTrace();
         }

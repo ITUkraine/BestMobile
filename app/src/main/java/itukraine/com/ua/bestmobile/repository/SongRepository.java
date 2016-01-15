@@ -6,6 +6,8 @@ import android.net.Uri;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.enums.RepeatState;
+import itukraine.com.ua.bestmobile.enums.ShuffleState;
 
 public interface SongRepository {
 
@@ -51,4 +53,12 @@ public interface SongRepository {
      * @return URI of the song.
      */
     Uri getSongUri(Long songId);
+
+    ShuffleState getShuffleMode();
+
+    void setShuffleMode(ShuffleState state);
+
+    RepeatState getRepeatMode();
+
+    void setRepeatMode(RepeatState state);
 }

@@ -2,6 +2,7 @@ package itukraine.com.ua.bestmobile.repository.impl;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import itukraine.com.ua.bestmobile.entity.Song;
+import itukraine.com.ua.bestmobile.enums.RepeatState;
+import itukraine.com.ua.bestmobile.enums.ShuffleState;
 import itukraine.com.ua.bestmobile.repository.SongRepository;
 
 /**
@@ -133,14 +136,16 @@ public class SongRepositoryImpl implements SongRepository {
 
     @Override
     public Long getCurrentSongId() {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getLong("currentSongId", -1);
+        return getDefaultSharedPreferences().getLong("currentSongId", -1);
     }
 
     @Override
     public void setCurrentSongId(Long currentSongId) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putLong("currentSongId", currentSongId).commit();
+        getDefaultSharedPreferences().edit().putLong("currentSongId", currentSongId).commit();
+    }
+
+    private SharedPreferences getDefaultSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Override
@@ -148,6 +153,28 @@ public class SongRepositoryImpl implements SongRepository {
         return ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 songId);
+    }
+
+    @Override
+    public ShuffleState getShuffleMode() {
+        return ShuffleState.values()[getDefaultSharedPreferences()
+                .getInt("shuffleMode", ShuffleState.SHUFFLE_OFF.ordinal())];
+    }
+
+    @Override
+    public void setShuffleMode(ShuffleState state) {
+        getDefaultSharedPreferences().edit().putInt("shuffleMode", state.ordinal()).commit();
+    }
+
+    @Override
+    public RepeatState getRepeatMode() {
+        return RepeatState.values()[getDefaultSharedPreferences()
+                .getInt("repeatMode", RepeatState.REPEAT_OFF.ordinal())];
+    }
+
+    @Override
+    public void setRepeatMode(RepeatState state) {
+        getDefaultSharedPreferences().edit().putInt("repeatMode", state.ordinal()).commit();
     }
 
     private Song convertCursorToSong(Cursor cursor) {

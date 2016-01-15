@@ -19,4 +19,8 @@ public interface PlayerPresenter {
     void onDestroy();
 
     void rewindTo(int pos);
+
+    void onShuffleModePressed();
+
+    void onRepeatModePressed();
 }

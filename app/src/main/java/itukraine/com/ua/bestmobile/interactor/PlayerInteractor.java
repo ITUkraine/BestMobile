@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import java.io.IOException;
 
 import itukraine.com.ua.bestmobile.entity.Playlist;
+import itukraine.com.ua.bestmobile.enums.RepeatState;
+import itukraine.com.ua.bestmobile.enums.ShuffleState;
 
 public interface PlayerInteractor {
 
@@ -45,4 +47,16 @@ public interface PlayerInteractor {
     String getCurrentSongTitle();
 
     int getCurrentSongTotalDuration();
+
+    ShuffleState getShuffleMode();
+
+    void setShuffleMode(ShuffleState state);
+
+    void shufflePlaylist();
+
+    void revertPlaylistToOriginal();
+
+    RepeatState getRepeatMode();
+
+    void setRepeatMode(RepeatState repeatMode);
 }
