@@ -1,6 +1,6 @@
 package itukraine.com.ua.bestmobile.presenter;
 
-public interface SongListPresenter {
+public interface SongListPresenter extends Filterable {
 
     void onResume();
 
@@ -15,8 +15,4 @@ public interface SongListPresenter {
     boolean isCurrentPlaylistDefault();
 
     void displayPickSongView();
-
-    void filterSongs();
-
-    void clearFilter();
 }

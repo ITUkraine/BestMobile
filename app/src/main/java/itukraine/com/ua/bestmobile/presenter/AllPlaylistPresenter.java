@@ -1,11 +1,7 @@
 package itukraine.com.ua.bestmobile.presenter;
 
-public interface AllPlaylistPresenter {
+public interface AllPlaylistPresenter extends Filterable {
     void deletePlaylist(int pos);
-
-    void filterSongs();
-
-    void clearFilter();
 
     boolean isPlaylistDefault(int positionInList);
 

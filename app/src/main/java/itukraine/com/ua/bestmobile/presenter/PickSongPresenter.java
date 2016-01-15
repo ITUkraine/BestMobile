@@ -1,6 +1,6 @@
 package itukraine.com.ua.bestmobile.presenter;
 
-public interface PickSongPresenter {
+public interface PickSongPresenter extends Filterable {
 
     void init(String playlistName);
 
@@ -10,7 +10,4 @@ public interface PickSongPresenter {
 
     void selectSongFromList(int position);
 
-    void filterSongs();
-
-    void clearFilter();
 }
