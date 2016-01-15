@@ -39,8 +39,10 @@ public class PlayerInteractorImpl implements
     private SongRepository songRepository;
     private PlaylistRepository playlistRepository;
     private MediaPlayerRepository mediaPlayerRepository;
+
     private Playlist playlist;
     private int songPosInPlaylist;
+
     private SendProgressUpdateBroadcastAsync progressUpdateBroadcastAsync;
     private LocalBroadcastManager broadcaster;
     private Intent mPlayIntent;
@@ -54,7 +56,8 @@ public class PlayerInteractorImpl implements
 
             sendInfoUpdate();
 
-            playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
+            playbackService.getNotification()
+                    .setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
         }
 
         @Override
@@ -160,7 +163,8 @@ public class PlayerInteractorImpl implements
         if (mediaPlayerRepository.isPlaying()) {
             mediaPlayerRepository.pause();
 
-            playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_pause);
+            playbackService.getNotification()
+                    .setNotificationSmallIcon(android.R.drawable.ic_media_pause);
         } else {
             if (mediaPlayerRepository.getCurrentSongTimePlayed() > getCurrentSong().duration) {
                 playCurrentSong();
@@ -168,10 +172,12 @@ public class PlayerInteractorImpl implements
                 mediaPlayerRepository.unPause();
             }
 
-            playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_play);
+            playbackService.getNotification()
+                    .setNotificationSmallIcon(android.R.drawable.ic_media_play);
         }
 
-        playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
+        playbackService.getNotification()
+                .setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
         Log.d("Play", "Same Song");
         songRepository.setCurrentSongId(getCurrentSong().id);
     }
@@ -179,10 +185,12 @@ public class PlayerInteractorImpl implements
     @Override
     public void playCurrentSong() throws IOException {
         Log.d("Play", "Change song");
-        playbackService.setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
+        playbackService.getNotification()
+                .setNotificationSongInfo(getCurrentSongArtist(), getCurrentSongTitle());
         mediaPlayerRepository.play(songRepository.getSongUri(getCurrentSong().id));
 
-        playbackService.setNotificationSmallIcon(android.R.drawable.ic_media_play);
+        playbackService.getNotification()
+                .setNotificationSmallIcon(android.R.drawable.ic_media_play);
     }
 
     @Override
