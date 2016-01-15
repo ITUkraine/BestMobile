@@ -38,6 +38,7 @@
     <string name="btn_send_feedback">Submit</string>
     <string name="write_your_feedback">Write Your Feedback:</string>
     <string name="please_rate_us">Please Rate Us:</string>
+    <string name="empty_string" />
 
     <string-array name="playlist_action_array">
         <item>Play</item>

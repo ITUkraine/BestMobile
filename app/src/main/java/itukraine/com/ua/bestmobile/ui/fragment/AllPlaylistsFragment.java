@@ -160,7 +160,7 @@ public class AllPlaylistsFragment extends SearchFragment implements AllPlaylistV
                 getActivity());
         builder.setTitle(isNewPlaylist ? mContext.getString(R.string.dlg_create_playlist) : mContext.getString(R.string.dlg_rename_playlist));
         final EditText input = new EditText(getActivity());
-        input.setText(allPlaylistPresenter.getOldPlaylistName(position));
+        input.setText(isNewPlaylist ? mContext.getString(R.string.empty_string) : allPlaylistPresenter.getOldPlaylistName(position));
         input.setSelection(input.getText().length());
         builder.setPositiveButton(isNewPlaylist ? mContext.getString(R.string.btn_create_playlist) : mContext.getString(R.string.btn_rename_playlist), null);
         builder.setNegativeButton(mContext.getString(R.string.btn_cancel), null);
@@ -178,7 +178,7 @@ public class AllPlaylistsFragment extends SearchFragment implements AllPlaylistV
                     @Override
                     public void onClick(View view) {
                         String newPlaylistName = input.getText().toString();
-                        if (newPlaylistName.equals("")) {
+                        if (newPlaylistName.equals(mContext.getString(R.string.empty_string))) {
                             displayErrorToastThatPlaylistMustHaveAtLeastOneChar();
                             return;
                         }
