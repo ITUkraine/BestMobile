@@ -1,9 +1,10 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#303030"
-    tools:context="itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment">
+<FrameLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#303030"
+             tools:context="itukraine.com.ua.bestmobile.ui.fragment.AllPlaylistsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@android:drawable/ic_menu_search"
-                android:paddingRight="48dp" />
+                android:paddingRight="48dp"/>
 
             <ImageView
                 android:id="@+id/imageClearSearch"
@@ -30,17 +31,26 @@
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="12dp"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
-                android:visibility="invisible" />
+                android:visibility="invisible"/>
         </FrameLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/playlist_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:scrollbars="vertical">
 
-            <requestFocus />
+            <requestFocus/>
         </android.support.v7.widget.RecyclerView>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
     </LinearLayout>
 
 
@@ -51,6 +61,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_input_add"
-        android:tint="@android:color/white" />
+        android:tint="@android:color/white"/>
 
 </FrameLayout>

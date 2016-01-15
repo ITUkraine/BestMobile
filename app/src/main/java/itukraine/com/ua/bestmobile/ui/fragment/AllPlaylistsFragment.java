@@ -20,6 +20,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import itukraine.com.ua.bestmobile.Constants;
 import itukraine.com.ua.bestmobile.R;
 import itukraine.com.ua.bestmobile.presenter.AllPlaylistPresenter;
@@ -60,9 +63,20 @@ public class AllPlaylistsFragment extends SearchFragment implements AllPlaylistV
 
         initRecycleView(view);
 
+        initAds(view);
+
         allPlaylistPresenter = new AllPlaylistPresenterImpl(this);
 
         return view;
+    }
+
+    private void initAds(View view) {
+        AdView mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("A90B694B76C9614CBB306B5655F8EABC")
+                .build();
+//        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
